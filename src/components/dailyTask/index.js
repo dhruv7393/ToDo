@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Grid from '@mui/material/Grid';
-import DoneIcon from '@mui/icons-material/Done';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -31,7 +29,7 @@ const DailyTask = () =>{
     const markAsChecked = taskToBeUpdated =>{
         axios.patch(process.env.REACT_APP_BACKEND_URL + "dailytask/"+taskToBeUpdated["_id"], taskToBeUpdated)
         .then(data => {
-            let updatedTaskList = taskList.map(task => task["_id"] == taskToBeUpdated["_id"]? taskToBeUpdated : task)
+            let updatedTaskList = taskList.map(task => task["_id"] === taskToBeUpdated["_id"]? taskToBeUpdated : task)
             updateTaskList(updatedTaskList)
         })
         .catch(err => setError(err))

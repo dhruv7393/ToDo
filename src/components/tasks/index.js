@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import DoneIcon from '@mui/icons-material/Done';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import Rating from '@mui/material/Rating';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 
@@ -150,7 +147,7 @@ const Todos = () => {
                         </Grid>
                     </div>
                     {Object.keys(taskList).length && Object.keys(taskList).map(id => {
-                        if(taskList[id]["headerId"] == headerId){
+                        if(taskList[id]["headerId"] === headerId){
                             let {title, notes, imp, addedOn, completedOn, completeBy, done} = taskList[id]
                             let label = { inputProps: { 'aria-label': title } };
                             return(
@@ -175,6 +172,7 @@ const Todos = () => {
                                 </div>
                             )
                         }
+                        return (<></>)
                     })}
                 </Typography>
                 </AccordionDetails>
