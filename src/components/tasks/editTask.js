@@ -14,25 +14,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 
 
-const AddTodo = ({ onClose, open }) => {
+const EditTodo = ({ onClose, open, task, updateTask }) => {
 
     const handleClose = () => {
-    onClose();
+        onClose();
     };
 
-    const initialTodo = {
-        headerId:"6536bf3ce25e5c4700b6e7b0",
-        title:'',
-        notes:'',
-        imp:5,
-        addedOn:new Date().toLocaleDateString(),
-        completedOn:'',
-        completeBy:'',
-        done:false
-    }
-
     const [headers, addHeaders] = useState([])
-    const [todo, addTodo] = useState(initialTodo)
+    const [todo, addTodo] = useState({...task})
     const [error, setError] = useState('')
 
     useEffect(()=>{
@@ -42,8 +31,10 @@ const AddTodo = ({ onClose, open }) => {
     },[])
 
     const addTodoToDB = ()=>{
-        axios.post(process.env.REACT_APP_BACKEND_URL + "todos", todo)
-        .then(data => addTodo(initialTodo))
+        axios.patch(process.env.REACT_APP_BACKEND_URL + "todos/"+todo._id, todo)
+        .then(data => {
+            updateTask(todo)
+        })
         .catch(err => {
             setError(err)
         })
@@ -51,6 +42,7 @@ const AddTodo = ({ onClose, open }) => {
     }
 
     return (
+        (open &&
         <Dialog onClose={handleClose} open={open} sx={{ m: 0, p: 2 }} id="customized-dialog-title">
 
             <DialogTitle>Add Todo</DialogTitle>
@@ -91,8 +83,8 @@ const AddTodo = ({ onClose, open }) => {
                 <Button variant="contained" onClick={() => addTodoToDB()}>Submit</Button>
             </DialogActions>
         
-        </Dialog>
+        </Dialog> ) || (<></>)
     );
 }
  
-export default AddTodo;
+export default EditTodo;

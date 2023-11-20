@@ -5,6 +5,9 @@ import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -13,6 +16,9 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DisplayNonDailyTask from './DisplayNonDailyTask';
+import EditTodo from './editTask';
+import DisplayDailyTask from "./DisplayDailyTask"
 
 const Todos = () => {
     
@@ -21,6 +27,18 @@ const Todos = () => {
   const [tasks, addTasks] = useState({})
   const [tasksForToday, addTasksForToday] = useState({})
   const [error, setError] = useState('')
+  const [open, setOpen] = useState(false);
+  const [taskToBeEdited, setTaskToBeEdited] = useState({})
+  const [viewHeader, setViewHeader] = useState("")
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setTaskToBeEdited({})
+    };
 
   useEffect(()=>{
     axios.get(process.env.REACT_APP_BACKEND_URL + "headers")
@@ -56,7 +74,12 @@ const Todos = () => {
         let organizedData = {}
         let listOfTodaysTask={}
         data.forEach(task =>{
-            organizedData[task._id] = task
+           if(Object.keys(organizedData).includes(task.headerId)){
+            organizedData[task.headerId] = [...organizedData[task.headerId], task]
+           }else{
+            organizedData[task.headerId] = [task]
+           }
+
             if((task.completeBy === today) || ( new Date(task.completeBy) <= new Date(today) && !task.done)){
                 listOfTodaysTask[task._id] = task
             }
@@ -67,12 +90,16 @@ const Todos = () => {
     .catch(err => setError(err))
   },[])
 
-  const deleteTask = id => {
+  const deleteTask = (headerId, id) => {
     axios.delete(process.env.REACT_APP_BACKEND_URL + "todos/"+id)
     .then(data => {
-        let listOfTasks = JSON.parse(JSON.stringify(tasks))
-        delete listOfTasks[id]
+        let listOfTasks =tasks[headerId]
+        listOfTasks = listOfTasks.filter(task => task._id !== id)
+        let newValue = {}
+        newValue[headerId] = listOfTasks
+        listOfTasks = {...tasks, ...newValue}
         addTasks(listOfTasks)
+        
         listOfTasks = JSON.parse(JSON.stringify(tasksForToday))
         delete listOfTasks[id]
         addTasksForToday(listOfTasks)
@@ -80,36 +107,69 @@ const Todos = () => {
     .catch(err => setError(err))
   }
 
-  const editTask = (id, e, keyName) =>{
-    let listOfTasks = JSON.parse(JSON.stringify(tasks))
-    listOfTasks[id][keyName] = e.target.value
-    addTasks(listOfTasks)
+  const markAsDone = (headerId, id)=>{
+    let listOfTasks =tasks[headerId]
+    listOfTasks = listOfTasks.map(task => {
+        if(task._id == id){task.done = !task.done}
+        return task
+    })
+    let newValue = {}
+    newValue[headerId] = listOfTasks
 
-    if(Object.keys(tasksForToday).includes(id)){
-        listOfTasks = JSON.parse(JSON.stringify(tasksForToday))
-        listOfTasks[id][keyName] = e.target.value
-        addTasksForToday(listOfTasks)
-    }
-  }
-
-  const markAsDone = (id, value, keyName)=>{
-    let listOfTasks = JSON.parse(JSON.stringify(tasks))
-    listOfTasks[id][keyName] = value
-    addTasks(listOfTasks)
-
-    if(Object.keys(tasksForToday).includes(id)){
-        listOfTasks = JSON.parse(JSON.stringify(tasksForToday))
-        listOfTasks[id][keyName] = value
-        addTasksForToday(listOfTasks)
-    }
-  }
-
-  const saveChanges = (id) =>{
-    axios.patch(process.env.REACT_APP_BACKEND_URL + "todos/"+id, tasks[id])
-    .then(data => console.log(data))
+    let taskToBeSent = listOfTasks.filter(task => task._id == id)
+    axios.patch(process.env.REACT_APP_BACKEND_URL + "todos/"+id, taskToBeSent[0])
+    .then(data => {
+        listOfTasks = {...tasks, ...newValue}
+        addTasks(listOfTasks)
+    })
     .catch(err => setError(err))
   }
-  
+
+  const markForToBeCompletedToday = (headerId, id) =>{
+    const today = new Date().toLocaleDateString()
+    let listOfTasks = JSON.parse(JSON.stringify(tasks[headerId]))
+    listOfTasks = listOfTasks.map(task => {
+        if(task._id == id){task.completeBy = (task.completeBy ? '' : today)}
+        return task
+    })
+    let newValue = {}
+    newValue[headerId] = listOfTasks
+    let taskToBeSent = listOfTasks.filter(task => task._id == id)
+
+
+    axios.patch(process.env.REACT_APP_BACKEND_URL + "todos/"+id, taskToBeSent[0])
+    .then(data => {
+        listOfTasks = {...tasks, ...newValue}
+        addTasks(listOfTasks)
+        listOfTasks = JSON.parse(JSON.stringify(tasksForToday))
+        Object.keys(listOfTasks).includes(id) ? delete listOfTasks[id] : listOfTasks[id]=tasks[headerId].filter(task => task._id == id)[0]
+        addTasksForToday(listOfTasks)
+    })
+    .catch(err => setError(err))
+
+  }
+
+  const editTask = (headerId, id) =>{
+    let listOfTasks = tasks[headerId].filter(task => task._id == id)
+    setTaskToBeEdited(listOfTasks[0])
+    setOpen(true)
+  }
+
+  const updateTask = (updatedtask) =>{
+    const {headerId, _id} = updatedtask
+    let listOfTasks = JSON.parse(JSON.stringify(tasks))
+    listOfTasks[headerId] = listOfTasks[headerId].map(task =>{
+        return (task._id == _id ? {...updatedtask} : {...task})
+    })
+    addTasks(listOfTasks)
+    listOfTasks = JSON.parse(JSON.stringify(tasksForToday))
+    let newValue = {}
+    newValue[_id] = updatedtask
+    listOfTasks = {...listOfTasks, ...newValue}
+
+    addTasksForToday(listOfTasks)
+  }
+
   /*
   const birthday = new Date(2026, 11, 17).toLocaleDateString();
   const today = new Date().toLocaleDateString()
@@ -120,128 +180,53 @@ const Todos = () => {
   //Keep pinned headers next
   //Keep normal headers next
 
-  const renderHeaderWithTodo = (headerList, headerId, taskList) =>{
-    return(
-        <div>
-            <Accordion>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                >
-                <Typography>{headerList[headerId].title}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    <div key={headerId}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={3}><b>ToDo</b></Grid>
-                            <Grid item xs={3}><b>Notes</b></Grid>
-                            <Grid item xs={1}><b>Priority</b></Grid>
-                            <Grid item xs={1}><b>Added On</b></Grid>
-                            <Grid item xs={1}><b>Completed On</b></Grid>
-                            <Grid item xs={1}><b>Complete By</b></Grid>
-                            <Grid item xs={1}><b>Completed</b></Grid>
-                            <Grid item xs={0.5}></Grid>
-                            <Grid item xs={0.5}></Grid>
-                        </Grid>
-                    </div>
-                    {Object.keys(taskList).length && Object.keys(taskList).map(id => {
-                        if(taskList[id]["headerId"] === headerId){
-                            let {title, notes, imp, addedOn, completedOn, completeBy, done} = taskList[id]
-                            let label = { inputProps: { 'aria-label': title } };
-                            return(
-                                <div key={id}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={3}><TextField id="outlined-basic" value={title} size="small" fullWidth onChange={(e)=>editTask(id, e, "title")}/></Grid>
-                                        <Grid item xs={3}><TextField id="outlined-basic" value={notes} size="small" fullWidth onChange={(e)=>editTask(id, e, "notes")}/></Grid>
-                                        <Grid item xs={1}>
-                                            <Rating
-                                                name="Importance of 5"
-                                                value={imp}
-                                                onChange={(e)=>editTask(id, e, "imp")}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={1}>{addedOn}</Grid>
-                                        <Grid item xs={1}><TextField id="outlined-basic" value={completedOn} size="small" onChange={(e)=>editTask(id, e, "completedOn")}/></Grid>
-                                        <Grid item xs={1}><TextField id="outlined-basic" value={completeBy} size="small" onChange={(e)=>editTask(id, e, "completeBy")}/></Grid>
-                                        <Grid item xs={1}><Switch {...label} checked={done} onChange={(e)=>markAsDone(id, !done, "done")}/></Grid>
-                                        <Grid item xs={0.5}><SaveIcon onClick={()=>saveChanges(id)}/></Grid>
-                                        <Grid item xs={0.5}><DeleteIcon onClick={()=>deleteTask(id)}/></Grid>
-                                    </Grid>
-                                </div>
-                            )
-                        }
-                        return (<></>)
-                    })}
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
-        </div>
-    )
-  }
-
 
   return ( 
     <>
         <div>
-            <Accordion>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                >
-                <Typography>List Of Task for today</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    <Grid container spacing={2}>
-                        <Grid item xs={3}><b>ToDo</b></Grid>
-                        <Grid item xs={3}><b>Notes</b></Grid>
-                        <Grid item xs={1}><b>Priority</b></Grid>
-                        <Grid item xs={1}><b>Added On</b></Grid>
-                        <Grid item xs={1}><b>Completed On</b></Grid>
-                        <Grid item xs={1}><b>Complete By</b></Grid>
-                        <Grid item xs={1}><b>Completed</b></Grid>
-                        <Grid item xs={1}></Grid>
-                    </Grid>
-                    {Object.keys(tasksForToday).length && Object.keys(tasksForToday).map(id => {
-                        let {title, notes, imp, addedOn, completedOn, completeBy, done} = tasksForToday[id]
-                        let label = { inputProps: { 'aria-label': title } };
-                        return(
-                            <div key={id}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={3}><TextField id="outlined-basic" value={title} size="small" fullWidth onChange={(e)=>editTask(id, e, "title")}/></Grid>
-                                    <Grid item xs={3}><TextField id="outlined-basic" value={notes} size="small" fullWidth onChange={(e)=>editTask(id, e, "notes")}/></Grid>
-                                    <Grid item xs={1}>
-                                        <Rating
-                                            name="Importance of 5"
-                                            value={imp}
-                                            onChange={(e)=>editTask(id, e, "imp")}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={1}>{addedOn}</Grid>
-                                    <Grid item xs={1}><TextField id="outlined-basic" value={completedOn} size="small" onChange={(e)=>editTask(id, e, "completedOn")}/></Grid>
-                                    <Grid item xs={1}><TextField id="outlined-basic" value={completeBy} size="small" onChange={(e)=>editTask(id, e, "completeBy")}/></Grid>
-                                    <Grid item xs={1}><Switch {...label} checked={done} onChange={(e)=>markAsDone(id, !done, "done")}/></Grid>
-                                    <Grid item xs={0.5}><SaveIcon onClick={()=>saveChanges(id)}/></Grid>
-                                    <Grid item xs={0.5}><DeleteIcon onClick={()=>deleteTask(id)}/></Grid>
-                                </Grid>
-                            </div>
-                        )
-                    })}
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
+            <DisplayDailyTask />
+            {Object.keys(taskToBeEdited).length ?
+            <EditTodo
+                open={open}
+                onClose={handleClose}
+                task={taskToBeEdited}
+                updateTask={updateTask}
+            />:
+            <></>
+            }
+            <DisplayNonDailyTask tasks={tasksForToday} header="Tasks For Today" deleteTask={deleteTask} markAsDone={markAsDone} markForToBeCompletedToday={markForToBeCompletedToday} todaysTask={Object.keys(tasksForToday)} editTask={editTask}/>
+            
+            <ButtonGroup variant="text" aria-label="outlined button group">
+                {Object.keys(headersAtTop).length && Object.keys(headersAtTop).map(header => {
+                    return(
+                        (!Object.keys(tasks).includes(header) && <></>) ||
+                        <Button disabled ={(viewHeader==header ? true : false)} onClick={()=>setViewHeader(header)}>{headersAtTop[header].title}</Button>
+                    )
+                })}
+                {Object.keys(headers).length && Object.keys(headers).map(header => {
+                    return(
+                        (!Object.keys(tasks).includes(header) && <></>) ||
+                        <Button disabled ={(viewHeader==header ? true : false)} onClick={()=>setViewHeader(header)}>{headers[header].title}</Button>
+                    )
+                })}
+            </ButtonGroup>
+            {Object.keys(headersAtTop).length && Object.keys(headersAtTop).map(headerId => {
+                return(
+                    (headerId !== viewHeader && <></>)||
+                    <>
+                        {tasks[headerId] && <DisplayNonDailyTask tasks={tasks[headerId]} header={headersAtTop[headerId].title} deleteTask={deleteTask} markAsDone={markAsDone} markForToBeCompletedToday={markForToBeCompletedToday} todaysTask={Object.keys(tasksForToday)} editTask={editTask}/>}
+                    </>
+                )
+            })}
+            {Object.keys(headers).length && Object.keys(headers).map(headerId => {
+                return(
+                    (headerId !== viewHeader && <></>)||
+                    <>
+                        {tasks[headerId] && <DisplayNonDailyTask tasks={tasks[headerId]} header={headers[headerId].title} deleteTask={deleteTask} markAsDone={markAsDone} markForToBeCompletedToday={markForToBeCompletedToday} todaysTask={Object.keys(tasksForToday)} editTask={editTask}/>}
+                    </>
+                )
+            })}
         </div>
-
-        {
-            Object.keys(headersAtTop).length && Object.keys(headersAtTop).map(headerId => renderHeaderWithTodo(headersAtTop, headerId, tasks))
-        }
-
-        {
-            Object.keys(headers).length && Object.keys(headers).map(headerId => renderHeaderWithTodo(headers, headerId, tasks))
-        }
     </>
    );
 }
