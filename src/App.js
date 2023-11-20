@@ -8,12 +8,14 @@ function App() {
 
   return (
     <>
-      <div className='halfScreen'>
-        <Todos />
-        <Header />
-        <AddTaskButton />
+      <div className='container'>
+        <div className='halfScreen'>
+          <Todos />
+          <Header />
+          <AddTaskButton />
+        </div>
+        <div className='halfScreen'><Inpiration /></div>
       </div>
-      <div className='halfScreen'><Inpiration /></div>
     </>
   );
 }
