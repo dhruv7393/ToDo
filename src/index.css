@@ -18,10 +18,16 @@ code {
 
 .container{
   display: flex;
+  padding: 30px;
 }
 
 
 .halfScreen{
   width: 100%;
   margin-left: 10px;
+}
+
+.inspiration{
+  max-width: 500px;
+  margin-top: 50px;
 }

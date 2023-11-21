@@ -15,6 +15,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import Chip from '@mui/material/Chip';
+import { button5 } from '../../style';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -36,7 +37,7 @@ export default function DisplayNonDailyTask({tasks, header,  deleteTask, markAsD
             {Object.keys(tasks).length && Object.keys(tasks).map(task =>{
                 let {_id, title, headerId, notes, imp, addedOn, completedOn, completeBy, done} = tasks[task]
                 return(
-                    <Card key={_id} sx={{ maxWidth: '30%'}} style={{ border: "1px solid red", borderLeft: "15px solid red" }}>
+                    <Card key={_id} sx={{ maxWidth: '30%'}} style={button5}>
                         <CardHeader
                             avatar={
                             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">

@@ -17,6 +17,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import Chip from '@mui/material/Chip';
+import { button5 } from '../../style';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -58,7 +59,7 @@ export default function DisplayDailyTask(props) {
             {taskList.length && taskList.map(task =>{
                 let {_id, title, done} = task
                 return(
-                    <Card key={_id} sx={{ width: '30%' }} style={{ border: "1px solid #E37239", borderLeft: "15px solid #E37239" }}>
+                    <Card key={_id} sx={{ width: '30%' }} style={button5}>
                         <CardHeader
                             action={
                                 <IconButton aria-label="settings" onClick={() => markAsChecked({_id, title, done: !done})}>

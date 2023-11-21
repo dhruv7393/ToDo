@@ -19,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DisplayNonDailyTask from './DisplayNonDailyTask';
 import EditTodo from './editTask';
 import DisplayDailyTask from "./DisplayDailyTask"
+import { buttonGroup } from '../../style';
 
 const Todos = () => {
     
@@ -196,7 +197,7 @@ const Todos = () => {
             }
             <DisplayNonDailyTask tasks={tasksForToday} header="Tasks For Today" deleteTask={deleteTask} markAsDone={markAsDone} markForToBeCompletedToday={markForToBeCompletedToday} todaysTask={Object.keys(tasksForToday)} editTask={editTask}/>
             
-            <ButtonGroup variant="text" aria-label="outlined button group">
+            <ButtonGroup variant="text" aria-label="outlined button group" style={buttonGroup}>
                 {Object.keys(headersAtTop).length && Object.keys(headersAtTop).map(header => {
                     return(
                         (!Object.keys(tasks).includes(header) && <></>) ||

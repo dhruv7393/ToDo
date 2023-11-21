@@ -14,7 +14,7 @@ function App() {
           <Header />
           <AddTaskButton />
         </div>
-        <div className='halfScreen'><Inpiration /></div>
+        <div className='halfScreen inspiration'><Inpiration /></div>
       </div>
     </>
   );
