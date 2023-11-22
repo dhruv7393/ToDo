@@ -12,6 +12,12 @@ import Alert from '@mui/material/Alert';
 function App() {
 
   const [error, setError] = useRecoilState(errorState)
+
+  useEffect(()=>{
+    axios.get(process.env.REACT_APP_BACKEND_URL + "dailytask/updatecount")
+    .then(data => console.log("Daily task updated"))
+    .catch(err => setError(err))
+},[])
   
   useEffect(()=>{
     setTimeout(() => {
