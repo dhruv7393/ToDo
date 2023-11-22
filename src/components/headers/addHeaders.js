@@ -8,11 +8,14 @@ import axios from 'axios';
 import Switch from '@mui/material/Switch';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { errorState } from '../error';
+import { useRecoilState } from 'recoil';
 
 
 
 function AddHeader(props) {
     const { onClose, open } = props;
+    const [error, setError] = useRecoilState(errorState)
 
     const handleClose = () => {
     onClose();
@@ -22,7 +25,6 @@ function AddHeader(props) {
     const [headers, addHeaders] = useState({})
     const [headerIP, addHeaderIP] = useState('')
     const [pinned, setPinned] = useState(false)
-    const [error, setError] = useState('')
 
     useEffect(()=>{
         axios.get(process.env.REACT_APP_BACKEND_URL + "headers")

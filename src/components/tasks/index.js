@@ -20,6 +20,8 @@ import DisplayNonDailyTask from './DisplayNonDailyTask';
 import EditTodo from './editTask';
 import DisplayDailyTask from "./DisplayDailyTask"
 import { buttonGroup } from '../../style';
+import { useRecoilState } from 'recoil';
+import { errorState } from '../error';
 
 const Todos = () => {
     
@@ -27,7 +29,7 @@ const Todos = () => {
   const [headersAtTop, addHeadersAtTop] = useState({})
   const [tasks, addTasks] = useState({})
   const [tasksForToday, addTasksForToday] = useState({})
-  const [error, setError] = useState('')
+  const [error, setError] = useRecoilState(errorState)
   const [open, setOpen] = useState(false);
   const [taskToBeEdited, setTaskToBeEdited] = useState({})
   const [viewHeader, setViewHeader] = useState("")

@@ -9,6 +9,8 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { cardBoundaryColor } from '../../style';
+import { useRecoilState } from 'recoil';
+import { errorState } from '../error';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -20,20 +22,13 @@ const ExpandMore = styled((props) => {
 export default function DisplayDailyTask(props) {
 
     const [taskList, updateTaskList] = useState([])
-    const [error, setError] = useState('')
+    const [error, setError] = useRecoilState(errorState)
 
     useEffect(()=>{
         axios.get(process.env.REACT_APP_BACKEND_URL + "dailytask")
         .then(listOfTasks => updateTaskList(listOfTasks["data"]))
         .catch(err => setError(err))
     },[])
-
-    useEffect(()=>{
-        setTimeout(() => {
-            setError('')
-        }, 10000);
-    }, [error])
-
 
     const markAsChecked = taskToBeUpdated =>{
         axios.patch(process.env.REACT_APP_BACKEND_URL + "dailytask/"+taskToBeUpdated["_id"], taskToBeUpdated)

@@ -1,12 +1,23 @@
 import Todos from './components/tasks';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from './components/headers';
 import AddTaskButton from './components/tasks/addTaskButton'
 import Inpiration from './components/inspiration';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { errorState } from './components/error';
+import { useRecoilState } from 'recoil';
+import Alert from '@mui/material/Alert';
 
 function App() {
+
+  const [error, setError] = useRecoilState(errorState)
+  
+  useEffect(()=>{
+    setTimeout(() => {
+        setError('')
+    }, 10000);
+}, [error])
 
   const darkTheme = createTheme({
     palette: {
@@ -19,6 +30,7 @@ function App() {
       <ThemeProvider theme={darkTheme}>
       <div className='container'>
         <div className='halfScreen'>
+          {(error && <Alert severity="error">{error}</Alert>) || <></>}
           <Todos />
           <Header />
           <AddTaskButton />

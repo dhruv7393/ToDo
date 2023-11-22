@@ -12,6 +12,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import { errorState } from '../error';
+import { useRecoilState } from 'recoil';
 
 
 const AddTodo = ({ onClose, open }) => {
@@ -33,7 +35,7 @@ const AddTodo = ({ onClose, open }) => {
 
     const [headers, addHeaders] = useState([])
     const [todo, addTodo] = useState(initialTodo)
-    const [error, setError] = useState('')
+    const [error, setError] = useRecoilState(errorState)
 
     useEffect(()=>{
         axios.get(process.env.REACT_APP_BACKEND_URL + "headers")
