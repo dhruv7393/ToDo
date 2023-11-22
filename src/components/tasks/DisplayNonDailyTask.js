@@ -7,15 +7,13 @@ import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
-import Chip from '@mui/material/Chip';
-import { button5 } from '../../style';
+import { avatarColor, cardBoundaryColor } from '../../style';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -37,10 +35,10 @@ export default function DisplayNonDailyTask({tasks, header,  deleteTask, markAsD
             {Object.keys(tasks).length && Object.keys(tasks).map(task =>{
                 let {_id, title, headerId, notes, imp, addedOn, completedOn, completeBy, done} = tasks[task]
                 return(
-                    <Card key={_id} sx={{ maxWidth: '30%'}} style={button5}>
+                    <Card key={_id} sx={{ maxWidth: '30%'}} style={cardBoundaryColor(imp)}>
                         <CardHeader
                             avatar={
-                            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                            <Avatar sx={avatarColor(imp)} aria-label="recipe">
                                 {imp}
                             </Avatar>
                             }

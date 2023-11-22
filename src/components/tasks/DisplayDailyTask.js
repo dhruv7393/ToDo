@@ -4,20 +4,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import PushPinIcon from '@mui/icons-material/PushPin';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CreateIcon from '@mui/icons-material/Create';
-import Chip from '@mui/material/Chip';
-import { button5 } from '../../style';
+import { cardBoundaryColor } from '../../style';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -59,7 +50,7 @@ export default function DisplayDailyTask(props) {
             {taskList.length && taskList.map(task =>{
                 let {_id, title, done} = task
                 return(
-                    <Card key={_id} sx={{ width: '30%' }} style={button5}>
+                    <Card key={_id} sx={{ width: '30%' }} style={cardBoundaryColor(5)}>
                         <CardHeader
                             action={
                                 <IconButton aria-label="settings" onClick={() => markAsChecked({_id, title, done: !done})}>
