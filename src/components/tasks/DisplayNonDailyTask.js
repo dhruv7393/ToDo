@@ -54,7 +54,7 @@ export default function DisplayNonDailyTask({tasks, header,  deleteTask, markAsD
                         }
                         <CardActions disableSpacing>
                             <Typography color="text.secondary">
-                                {addedOn} {""+ completeBy && `-${completeBy}`}
+                                {""+ (completeBy && `${completeBy} (`) + Math.ceil((new Date(new Date().toLocaleDateString()) - new Date(addedOn)) / (1000 * 60 * 60 * 24)) + (completeBy && `)`)}
                             </Typography>
                             <ExpandMore
                             expand={true}
