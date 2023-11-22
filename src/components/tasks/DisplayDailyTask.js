@@ -11,6 +11,9 @@ import Stack from '@mui/material/Stack';
 import { cardBoundaryColor } from '../../style';
 import { useRecoilState } from 'recoil';
 import { errorState } from '../error';
+import { avatarColor } from '../../style';
+import Avatar from '@mui/material/Avatar';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -43,15 +46,21 @@ export default function DisplayDailyTask(props) {
     <Box key={"Daily Tasks"} sx={{ width: '100%', marginRight: 0.5, my: 5 }}>
         <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
             {taskList.length && taskList.map(task =>{
-                let {_id, title, done} = task
+                let {_id, title, done, edited, pending} = task
                 return(
                     <Card key={_id} sx={{ width: '30%' }} style={cardBoundaryColor(5)}>
                         <CardHeader
                             action={
-                                <IconButton aria-label="settings" onClick={() => markAsChecked({_id, title, done: !done})}>
-                                  <CheckCircleOutlineRoundedIcon  color = {"" + (done && 'primary')}/>
+                                (done && <></>) || 
+                                <IconButton aria-label="settings" onClick={() => markAsChecked({_id, title, done: (pending=="1" ? !done : done), edited, pending : (parseInt(pending)-1 < 0 ? 0 : parseInt(pending)-1).toString()})}>
+                                  <RemoveCircleOutlineIcon  color = {"" + (done && 'primary')}/>
                                 </IconButton>
                               }
+                              avatar={
+                                <Avatar sx={avatarColor(5)} aria-label="recipe">
+                                    {pending}
+                                </Avatar>
+                                }
                             title={title}
                         />
                     </Card>
