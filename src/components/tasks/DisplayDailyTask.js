@@ -51,9 +51,9 @@ export default function DisplayDailyTask(props) {
                     <Card key={_id} sx={{ width: '30%' }} style={cardBoundaryColor(5)}>
                         <CardHeader
                             action={
-                                (done && <></>) || 
+                                (!(parseInt(pending)) && <></>) || 
                                 <IconButton aria-label="settings" onClick={() => markAsChecked({_id, title, done: (pending=="1" ? !done : done), edited, pending : (parseInt(pending)-1 < 0 ? 0 : parseInt(pending)-1).toString()})}>
-                                  <RemoveCircleOutlineIcon  color = {"" + (done && 'primary')}/>
+                                  <RemoveCircleOutlineIcon  color = {"" + (!(parseInt(pending)) && 'primary')}/>
                                 </IconButton>
                               }
                               avatar={
