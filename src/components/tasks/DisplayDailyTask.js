@@ -59,51 +59,55 @@ export default function DisplayDailyTask(props) {
         {taskList.length &&
           taskList.map((task) => {
             let { _id, title, done, edited, pending } = task;
-            return (
-              <Card
-                key={_id}
-                sx={{
-                  width: {
-                    xs: "100%",
-                    sm: "40%",
-                    md: "30%",
-                  },
-                }}
-                style={cardBoundaryColor(5)}
-              >
-                <CardHeader
-                  action={
-                    (!parseInt(pending) && <></>) || (
-                      <IconButton
-                        aria-label="settings"
-                        onClick={() =>
-                          markAsChecked({
-                            _id,
-                            title,
-                            done: pending == "1" ? !done : done,
-                            edited,
-                            pending: (parseInt(pending) - 1 < 0
-                              ? 0
-                              : parseInt(pending) - 1
-                            ).toString(),
-                          })
-                        }
-                      >
-                        <RemoveCircleOutlineIcon
-                          color={"" + (!parseInt(pending) && "primary")}
-                        />
-                      </IconButton>
-                    )
-                  }
-                  avatar={
-                    <Avatar sx={avatarColor(5)} aria-label="recipe">
-                      {pending}
-                    </Avatar>
-                  }
-                  title={title}
-                />
-              </Card>
-            );
+            if (parseInt(pending)) {
+              return (
+                <Card
+                  key={_id}
+                  sx={{
+                    width: {
+                      xs: "100%",
+                      sm: "40%",
+                      md: "30%",
+                    },
+                  }}
+                  style={cardBoundaryColor(5)}
+                >
+                  <CardHeader
+                    action={
+                      (!parseInt(pending) && <></>) || (
+                        <IconButton
+                          aria-label="settings"
+                          onClick={() =>
+                            markAsChecked({
+                              _id,
+                              title,
+                              done: pending == "1" ? !done : done,
+                              edited,
+                              pending: (parseInt(pending) - 1 < 0
+                                ? 0
+                                : parseInt(pending) - 1
+                              ).toString(),
+                            })
+                          }
+                        >
+                          <RemoveCircleOutlineIcon
+                            color={"" + (!parseInt(pending) && "primary")}
+                          />
+                        </IconButton>
+                      )
+                    }
+                    avatar={
+                      <Avatar sx={avatarColor(5)} aria-label="recipe">
+                        {pending}
+                      </Avatar>
+                    }
+                    title={title}
+                  />
+                </Card>
+              );
+            } else {
+              return <></>;
+            }
           })}
       </Stack>
     </Box>
