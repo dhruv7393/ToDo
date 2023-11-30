@@ -61,8 +61,12 @@ export default function DisplayNonDailyTask({
             return (
               <Card
                 key={_id}
-                lg={{ maxWidth: "30%" }}
-                sm={{ width: "80%" }}
+                sx={{
+                  width: {
+                    sm: "100%",
+                    md: "30%",
+                  },
+                }}
                 style={cardBoundaryColor(imp)}
               >
                 <CardHeader

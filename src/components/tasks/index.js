@@ -21,6 +21,7 @@ import DisplayDailyTask from "./DisplayDailyTask";
 import { buttonGroup } from "../../style";
 import { useRecoilState } from "recoil";
 import { errorState } from "../error";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Todos = () => {
   const [headers, addHeaders] = useState({});
@@ -196,6 +197,8 @@ const Todos = () => {
   //Keep pinned headers next
   //Keep normal headers next
 
+  const matches = useMediaQuery("(min-width:600px)");
+
   return (
     <>
       <div>
@@ -224,7 +227,7 @@ const Todos = () => {
           variant="text"
           aria-label="outlined button group"
           style={buttonGroup}
-          sm={{ width: "100%" }}
+          orientation={`${matches ? `horizontal` : `vertical`}`}
         >
           {Object.keys(headersAtTop).length &&
             Object.keys(headersAtTop).map((header) => {
@@ -233,7 +236,6 @@ const Todos = () => {
                   <Button
                     disabled={viewHeader == header ? true : false}
                     onClick={() => setViewHeader(header)}
-                    sm={{ width: "100%" }}
                   >
                     {headersAtTop[header].title}
                   </Button>
@@ -247,7 +249,6 @@ const Todos = () => {
                   <Button
                     disabled={viewHeader == header ? true : false}
                     onClick={() => setViewHeader(header)}
-                    sm={{ width: "100%" }}
                   >
                     {headers[header].title}
                   </Button>

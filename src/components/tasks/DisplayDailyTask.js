@@ -64,8 +64,12 @@ export default function DisplayDailyTask(props) {
             return (
               <Card
                 key={_id}
-                lg={{ width: "30%" }}
-                sm={{ width: "100%" }}
+                sx={{
+                  width: {
+                    sm: "100%",
+                    md: "30%",
+                  },
+                }}
                 style={cardBoundaryColor(5)}
               >
                 <CardHeader
