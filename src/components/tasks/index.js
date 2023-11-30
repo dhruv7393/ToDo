@@ -197,7 +197,7 @@ const Todos = () => {
   //Keep pinned headers next
   //Keep normal headers next
 
-  const matches = useMediaQuery("(min-width:600px)");
+  const matches = useMediaQuery("(min-width:900px)");
 
   return (
     <>

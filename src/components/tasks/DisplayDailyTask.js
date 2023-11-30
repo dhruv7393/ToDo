@@ -14,6 +14,7 @@ import { errorState } from "../error";
 import { avatarColor } from "../../style";
 import Avatar from "@mui/material/Avatar";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -50,14 +51,11 @@ export default function DisplayDailyTask(props) {
       .catch((err) => setError(err));
   };
 
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
     <Box key={"Daily Tasks"} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
-      <Stack
-        spacing={{ xs: 1, sm: 2 }}
-        direction="row"
-        useFlexGap
-        flexWrap="wrap"
-      >
+      <Stack spacing={{ xs: 1 }} direction="row" useFlexGap flexWrap="wrap">
         {taskList.length &&
           taskList.map((task) => {
             let { _id, title, done, edited, pending } = task;
@@ -66,7 +64,8 @@ export default function DisplayDailyTask(props) {
                 key={_id}
                 sx={{
                   width: {
-                    sm: "100%",
+                    xs: "100%",
+                    sm: "40%",
                     md: "30%",
                   },
                 }}

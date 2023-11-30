@@ -63,7 +63,8 @@ export default function DisplayNonDailyTask({
                 key={_id}
                 sx={{
                   width: {
-                    sm: "100%",
+                    xs: "100%",
+                    sm: "40%",
                     md: "30%",
                   },
                 }}
