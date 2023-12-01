@@ -5,19 +5,32 @@ import AddTaskButton from "./components/tasks/addTaskButton";
 import Inpiration from "./components/inspiration";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { errorState } from "./components/state/atoms/error";
 import { useRecoilState } from "recoil";
 import Alert from "@mui/material/Alert";
 import axios from "axios";
+import { useHeaderState } from "./components/state/atoms/headers";
+import { useError } from "./components/state/atoms/error";
+import { useTaskState } from "./components/state/atoms/tasks";
+import {
+  getAndAddDailyTasks,
+  getAndAddNonDailyTasks,
+} from "./components/state/selectors/tasks";
+import { getAndAddHeaders } from "./components/state/selectors/headers";
 
 function App() {
-  const [error, setError] = useRecoilState(errorState);
+  const { setHeader, setHeaderAtTop } = useHeaderState();
+  const { error, setError } = useError();
+  const { updateTaskList, addTasks, addTasksForToday } = useTaskState();
 
   useEffect(() => {
     axios
       .get(process.env.REACT_APP_BACKEND_URL + "dailytask/updatecount")
-      .then((data) => console.log("Daily task updated"))
+      .then((data) => setError("Daily task updated"))
       .catch((err) => setError(err));
+
+    getAndAddHeaders(setHeader, setHeaderAtTop, setError);
+    getAndAddDailyTasks(updateTaskList, setError);
+    getAndAddNonDailyTasks(addTasks, addTasksForToday, setError);
   }, []);
 
   useEffect(() => {

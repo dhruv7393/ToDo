@@ -8,12 +8,9 @@ export const getAndAddHeaders = (setHeader, setHeaderAtTop, setError) => {
       let headersNotPinned = {};
 
       data.forEach((currentHeader) => {
-        let { title, pinned } = currentHeader;
+        let { pinned } = currentHeader;
         let headerToBeAdded = {};
-        headerToBeAdded[currentHeader["_id"]] = {
-          title: title,
-          pinned: pinned,
-        };
+        headerToBeAdded[currentHeader["_id"]] = currentHeader;
         if (pinned) {
           headersPinned = { ...headersPinned, ...headerToBeAdded };
         } else {
@@ -36,8 +33,10 @@ export const addNewHeader = (
   setError
 ) => {
   let listOfHeaders = [];
-  headers.map((headerId) => listOfHeaders.push(headers[headerId].title));
-  headersAtTop.map((headerId) =>
+  Object.keys(headers).map((headerId) =>
+    listOfHeaders.push(headers[headerId].title)
+  );
+  Object.keys(headersAtTop).map((headerId) =>
     listOfHeaders.push(headersAtTop[headerId].title)
   );
   if (newHeader.title in listOfHeaders) {
@@ -46,7 +45,7 @@ export const addNewHeader = (
     axios
       .post(process.env.REACT_APP_BACKEND_URL + "headers", newHeader)
       .then((data) => {
-        console.log("Header added successfully");
+        setError("Header added successfully");
         getAndAddHeaders(setHeader, setHeaderAtTop, setError);
       })
       .catch((err) => setError(err));

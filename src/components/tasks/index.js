@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Rating from "@mui/material/Rating";
 import Switch from "@mui/material/Switch";
@@ -19,22 +19,22 @@ import DisplayNonDailyTask from "./DisplayNonDailyTask";
 import EditTodo from "./editTask";
 import DisplayDailyTask from "./DisplayDailyTask";
 import { buttonGroup } from "../../style";
-import { useRecoilState } from "recoil";
-import { errorState } from "../state/atoms/error";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { getAndAddHeaders } from "../state/selectors/headers";
 import { useHeaderState } from "../state/atoms/headers";
-import { useError } from "../state/atoms/erro1";
+import { useError } from "../state/atoms/error";
+import { useTaskState } from "../state/atoms/tasks";
+import {
+  deleteNonDailyTask,
+  markNonDailyTaskAsDone,
+  updateNonDailyTask,
+  markNonDailyForToBeCompletedToday,
+} from "../state/selectors/tasks";
 
 const Todos = () => {
-  // const [header, addheader] = useState({});
-  // const [headerAtTop, addheaderAtTop] = useState({});
   const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
-  const { error1, setError1 } = useError();
-  const [error, setError] = useRecoilState(errorState);
+  const { setError } = useError();
+  const { tasks, addTasks, tasksForToday, addTasksForToday } = useTaskState();
 
-  const [tasks, addTasks] = useState({});
-  const [tasksForToday, addTasksForToday] = useState({});
   const [open, setOpen] = useState(false);
   const [taskToBeEdited, setTaskToBeEdited] = useState({});
   const [viewHeader, setViewHeader] = useState("");
@@ -48,106 +48,32 @@ const Todos = () => {
     setTaskToBeEdited({});
   };
 
-  useEffect(() => {
-    getAndAddHeaders(setHeader, setHeaderAtTop, setError1);
-  }, []);
-
-  useEffect(() => {
-    const today = new Date().toLocaleDateString();
-    axios
-      .get(process.env.REACT_APP_BACKEND_URL + "todos")
-      .then(({ data }) => {
-        let organizedData = {};
-        let listOfTodaysTask = {};
-        data.forEach((task) => {
-          if (Object.keys(organizedData).includes(task.headerId)) {
-            organizedData[task.headerId] = [
-              ...organizedData[task.headerId],
-              task,
-            ];
-          } else {
-            organizedData[task.headerId] = [task];
-          }
-
-          if (
-            task.completeBy === today ||
-            (new Date(task.completeBy) <= new Date(today) && !task.done)
-          ) {
-            listOfTodaysTask[task._id] = task;
-          }
-        });
-        addTasks(organizedData);
-        addTasksForToday(listOfTodaysTask);
-      })
-      .catch((err) => setError(err));
-  }, []);
-
   const deleteTask = (headerId, id) => {
-    axios
-      .delete(process.env.REACT_APP_BACKEND_URL + "todos/" + id)
-      .then((data) => {
-        let listOfTasks = tasks[headerId];
-        listOfTasks = listOfTasks.filter((task) => task._id !== id);
-        let newValue = {};
-        newValue[headerId] = listOfTasks;
-        listOfTasks = { ...tasks, ...newValue };
-        addTasks(listOfTasks);
-
-        listOfTasks = JSON.parse(JSON.stringify(tasksForToday));
-        delete listOfTasks[id];
-        addTasksForToday(listOfTasks);
-      })
-      .catch((err) => setError(err));
+    deleteNonDailyTask(
+      headerId,
+      id,
+      tasks,
+      addTasks,
+      tasksForToday,
+      addTasksForToday,
+      setError
+    );
   };
 
   const markAsDone = (headerId, id) => {
-    let listOfTasks = tasks[headerId];
-    listOfTasks = listOfTasks.map((task) => {
-      if (task._id == id) {
-        task.done = !task.done;
-      }
-      return task;
-    });
-    let newValue = {};
-    newValue[headerId] = listOfTasks;
-
-    let taskToBeSent = listOfTasks.filter((task) => task._id == id);
-    axios
-      .patch(process.env.REACT_APP_BACKEND_URL + "todos/" + id, taskToBeSent[0])
-      .then((data) => {
-        listOfTasks = { ...tasks, ...newValue };
-        addTasks(listOfTasks);
-      })
-      .catch((err) => setError(err));
+    markNonDailyTaskAsDone(headerId, id, tasks, addTasks, setError);
   };
 
   const markForToBeCompletedToday = (headerId, id) => {
-    const today = new Date().toLocaleDateString();
-    let listOfTasks = JSON.parse(JSON.stringify(tasks[headerId]));
-    listOfTasks = listOfTasks.map((task) => {
-      if (task._id == id) {
-        task.completeBy = task.completeBy ? "" : today;
-      }
-      return task;
-    });
-    let newValue = {};
-    newValue[headerId] = listOfTasks;
-    let taskToBeSent = listOfTasks.filter((task) => task._id == id);
-
-    axios
-      .patch(process.env.REACT_APP_BACKEND_URL + "todos/" + id, taskToBeSent[0])
-      .then((data) => {
-        listOfTasks = { ...tasks, ...newValue };
-        addTasks(listOfTasks);
-        listOfTasks = JSON.parse(JSON.stringify(tasksForToday));
-        Object.keys(listOfTasks).includes(id)
-          ? delete listOfTasks[id]
-          : (listOfTasks[id] = tasks[headerId].filter(
-              (task) => task._id == id
-            )[0]);
-        addTasksForToday(listOfTasks);
-      })
-      .catch((err) => setError(err));
+    markNonDailyForToBeCompletedToday(
+      headerId,
+      id,
+      tasks,
+      addTasks,
+      tasksForToday,
+      addTasksForToday,
+      setError
+    );
   };
 
   const editTask = (headerId, id) => {
@@ -157,18 +83,13 @@ const Todos = () => {
   };
 
   const updateTask = (updatedtask) => {
-    const { headerId, _id } = updatedtask;
-    let listOfTasks = JSON.parse(JSON.stringify(tasks));
-    listOfTasks[headerId] = listOfTasks[headerId].map((task) => {
-      return task._id == _id ? { ...updatedtask } : { ...task };
-    });
-    addTasks(listOfTasks);
-    listOfTasks = JSON.parse(JSON.stringify(tasksForToday));
-    let newValue = {};
-    newValue[_id] = updatedtask;
-    listOfTasks = { ...listOfTasks, ...newValue };
-
-    addTasksForToday(listOfTasks);
+    updateNonDailyTask(
+      updatedtask,
+      tasks,
+      addTasks,
+      tasksForToday,
+      addTasksForToday
+    );
   };
 
   /*

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -8,18 +8,15 @@ import axios from "axios";
 import Switch from "@mui/material/Switch";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { errorState } from "../state/atoms/error";
-import { useRecoilState } from "recoil";
 import { useHeaderState } from "../state/atoms/headers";
-import { useError } from "../state/atoms/erro1";
+import { useError } from "../state/atoms/error";
 import { addNewHeader } from "../state/selectors/headers";
 
 function AddHeader(props) {
   const { onClose, open } = props;
-  const [error, setError] = useRecoilState(errorState);
 
   const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
-  const { error1, setError1 } = useError();
+  const { setError } = useError();
 
   const [headerIP, addHeaderIP] = useState("");
   const [pinned, setPinned] = useState(false);
@@ -31,7 +28,7 @@ function AddHeader(props) {
       setHeader,
       headerAtTop,
       setHeaderAtTop,
-      setError1
+      setError
     );
     handleClose();
   };

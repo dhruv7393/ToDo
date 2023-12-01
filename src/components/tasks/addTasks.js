@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -12,8 +12,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { errorState } from "../state/atoms/error";
-import { useRecoilState } from "recoil";
+import { useHeaderState } from "../state/atoms/headers";
+import { useError } from "../state/atoms/error";
 
 const AddTodo = ({ onClose, open }) => {
   const handleClose = () => {
@@ -31,16 +31,10 @@ const AddTodo = ({ onClose, open }) => {
     done: false,
   };
 
-  const [headers, addHeaders] = useState([]);
-  const [todo, addTodo] = useState(initialTodo);
-  const [error, setError] = useRecoilState(errorState);
+  const { header } = useHeaderState();
+  const { setError } = useError();
 
-  useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_BACKEND_URL + "headers")
-      .then(({ data }) => addHeaders(data))
-      .catch((err) => setError(err));
-  }, []);
+  const [todo, addTodo] = useState(initialTodo);
 
   const addTodoToDB = () => {
     axios
@@ -73,10 +67,13 @@ const AddTodo = ({ onClose, open }) => {
             onChange={(e) => addTodo({ ...todo, headerId: e.target.value })}
             label="Age"
           >
-            {headers &&
-              headers.map((header) => (
-                <MenuItem value={header._id} key={header._id}>
-                  {header.title}
+            {Object.keys(header).length &&
+              Object.keys(header).map((headerId) => (
+                <MenuItem
+                  value={header[headerId]._id}
+                  key={header[headerId]._id}
+                >
+                  {header[headerId].title}
                 </MenuItem>
               ))}
           </Select>

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -9,18 +8,13 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { cardBoundaryColor } from "../../style";
-import { useRecoilState } from "recoil";
-import { errorState } from "../state/atoms/error";
 import { avatarColor } from "../../style";
 import Avatar from "@mui/material/Avatar";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTaskState } from "../state/atoms/tasks";
-import { useError } from "../state/atoms/erro1";
-import {
-  getAndAddDailyTasks,
-  updateDailyTaskCount,
-} from "../state/selectors/tasks";
+import { useError } from "../state/atoms/error";
+import { updateDailyTaskCount } from "../state/selectors/tasks";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -30,18 +24,11 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function DisplayDailyTask(props) {
-  // const [taskList, updateTaskList] = useState([]);
-  // const [error, setError] = useRecoilState(errorState);
-
   const { taskList, updateTaskList } = useTaskState();
-  const { error1, setError1 } = useError();
-
-  useEffect(() => {
-    getAndAddDailyTasks(updateTaskList, setError1);
-  }, []);
+  const { error, setError } = useError();
 
   const markAsChecked = (taskToBeUpdated) => {
-    updateDailyTaskCount(taskList, taskToBeUpdated, updateTaskList, setError1);
+    updateDailyTaskCount(taskList, taskToBeUpdated, updateTaskList, setError);
   };
 
   const matches = useMediaQuery("(max-width:600px)");
@@ -49,9 +36,9 @@ export default function DisplayDailyTask(props) {
   return (
     <Box key={"Daily Tasks"} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
       <Stack spacing={{ xs: 1 }} direction="row" useFlexGap flexWrap="wrap">
-        {taskList.length &&
-          taskList.map((task) => {
-            let { _id, title, done, edited, pending } = task;
+        {Object.keys(taskList).length &&
+          Object.keys(taskList).map((task) => {
+            let { _id, title, done, edited, pending } = taskList[task];
             if (parseInt(pending)) {
               return (
                 <Card

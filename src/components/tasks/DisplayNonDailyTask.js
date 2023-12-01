@@ -31,12 +31,6 @@ export default function DisplayNonDailyTask({
   todaysTask,
   editTask,
 }) {
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpandClick = () => {
-    console.log(!expanded);
-  };
-
   return (
     <Box key={header} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
       <Stack
