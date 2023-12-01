@@ -20,7 +20,7 @@ export const taskListState = atom({
 export const useTaskState = () => {
   const [tasks, addTasks] = useRecoilState(tasksState);
   const [tasksForToday, addTasksForToday] = useRecoilState(tasksForTodayState);
-  const [taskList, updateTaskList] = useRecoilState(tasksState);
+  const [taskList, updateTaskList] = useRecoilState(taskListState);
   return {
     tasks,
     addTasks,

@@ -101,7 +101,7 @@ export const markNonDailyTaskAsDone = (
   let listOfTasks = tasks[headerId];
   listOfTasks = listOfTasks.map((task) => {
     if (task._id == id) {
-      task.done = !task.done;
+      return { ...task, done: !task.done };
     }
     return task;
   });
@@ -131,12 +131,19 @@ export const updateNonDailyTask = (
     return task._id == _id ? { ...updatedtask } : { ...task };
   });
   addTasks(listOfTasks);
-  listOfTasks = JSON.parse(JSON.stringify(tasksForToday));
-  let newValue = {};
-  newValue[_id] = updatedtask;
-  listOfTasks = { ...listOfTasks, ...newValue };
 
-  addTasksForToday(listOfTasks);
+  const today = new Date().toLocaleDateString();
+
+  if (
+    updatedtask.completeBy === today ||
+    (new Date(updatedtask.completeBy) <= new Date(today) && !updatedtask.done)
+  ) {
+    listOfTasks = JSON.parse(JSON.stringify(tasksForToday));
+    let newValue = {};
+    newValue[_id] = updatedtask;
+    listOfTasks = { ...listOfTasks, ...newValue };
+    addTasksForToday(listOfTasks);
+  }
 };
 
 export const markNonDailyForToBeCompletedToday = (

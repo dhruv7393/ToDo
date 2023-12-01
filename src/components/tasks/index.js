@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Rating from "@mui/material/Rating";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
@@ -36,9 +35,9 @@ export default function DisplayDailyTask(props) {
   return (
     <Box key={"Daily Tasks"} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
       <Stack spacing={{ xs: 1 }} direction="row" useFlexGap flexWrap="wrap">
-        {Object.keys(taskList).length &&
-          Object.keys(taskList).map((task) => {
-            let { _id, title, done, edited, pending } = taskList[task];
+        {(taskList.length &&
+          taskList.map((task) => {
+            let { _id, title, done, edited, pending } = task;
             if (parseInt(pending)) {
               return (
                 <Card
@@ -88,7 +87,7 @@ export default function DisplayDailyTask(props) {
             } else {
               return <></>;
             }
-          })}
+          })) || <></>}
       </Stack>
     </Box>
   );
