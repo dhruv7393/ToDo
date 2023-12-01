@@ -10,43 +10,35 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { errorState } from "../state/atoms/error";
 import { useRecoilState } from "recoil";
+import { useHeaderState } from "../state/atoms/headers";
+import { useError } from "../state/atoms/erro1";
+import { addNewHeader } from "../state/selectors/headers";
 
 function AddHeader(props) {
   const { onClose, open } = props;
   const [error, setError] = useRecoilState(errorState);
 
-  const handleClose = () => {
-    onClose();
-  };
+  const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
+  const { error1, setError1 } = useError();
 
-  const [headers, addHeaders] = useState({});
   const [headerIP, addHeaderIP] = useState("");
   const [pinned, setPinned] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_BACKEND_URL + "headers")
-      .then(({ data }) => {
-        addHeaders(data.map((dataOfHeader) => dataOfHeader.title));
-      })
-      .catch((err) => setError(err));
-  }, []);
-
   const addHeader = () => {
-    if (headerIP in headers) {
-      setError("Header already exists");
-    } else {
-      axios
-        .post(process.env.REACT_APP_BACKEND_URL + "headers", {
-          title: headerIP,
-          pinned,
-        })
-        .then((data) => {
-          console.log("Header added successfully");
-        })
-        .catch((err) => setError(err));
-    }
+    addNewHeader(
+      { title: headerIP, pinned: pinned },
+      header,
+      setHeader,
+      headerAtTop,
+      setHeaderAtTop,
+      setError1
+    );
     handleClose();
+  };
+
+  const handleClose = () => {
+    addHeaderIP("");
+    onClose();
   };
 
   return (

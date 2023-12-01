@@ -15,6 +15,12 @@ import { avatarColor } from "../../style";
 import Avatar from "@mui/material/Avatar";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTaskState } from "../state/atoms/tasks";
+import { useError } from "../state/atoms/erro1";
+import {
+  getAndAddDailyTasks,
+  updateDailyTaskCount,
+} from "../state/selectors/tasks";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -24,31 +30,18 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function DisplayDailyTask(props) {
-  const [taskList, updateTaskList] = useState([]);
-  const [error, setError] = useRecoilState(errorState);
+  // const [taskList, updateTaskList] = useState([]);
+  // const [error, setError] = useRecoilState(errorState);
+
+  const { taskList, updateTaskList } = useTaskState();
+  const { error1, setError1 } = useError();
 
   useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_BACKEND_URL + "dailytask")
-      .then((listOfTasks) => updateTaskList(listOfTasks["data"]))
-      .catch((err) => setError(err));
+    getAndAddDailyTasks(updateTaskList, setError1);
   }, []);
 
   const markAsChecked = (taskToBeUpdated) => {
-    axios
-      .patch(
-        process.env.REACT_APP_BACKEND_URL +
-          "dailytask/" +
-          taskToBeUpdated["_id"],
-        taskToBeUpdated
-      )
-      .then((data) => {
-        let updatedTaskList = taskList.map((task) =>
-          task["_id"] === taskToBeUpdated["_id"] ? taskToBeUpdated : task
-        );
-        updateTaskList(updatedTaskList);
-      })
-      .catch((err) => setError(err));
+    updateDailyTaskCount(taskList, taskToBeUpdated, updateTaskList, setError1);
   };
 
   const matches = useMediaQuery("(max-width:600px)");

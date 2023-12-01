@@ -22,13 +22,19 @@ import { buttonGroup } from "../../style";
 import { useRecoilState } from "recoil";
 import { errorState } from "../state/atoms/error";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { getAndAddHeaders } from "../state/selectors/headers";
+import { useHeaderState } from "../state/atoms/headers";
+import { useError } from "../state/atoms/erro1";
 
 const Todos = () => {
-  const [headers, addHeaders] = useState({});
-  const [headersAtTop, addHeadersAtTop] = useState({});
+  // const [header, addheader] = useState({});
+  // const [headerAtTop, addheaderAtTop] = useState({});
+  const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
+  const { error1, setError1 } = useError();
+  const [error, setError] = useRecoilState(errorState);
+
   const [tasks, addTasks] = useState({});
   const [tasksForToday, addTasksForToday] = useState({});
-  const [error, setError] = useRecoilState(errorState);
   const [open, setOpen] = useState(false);
   const [taskToBeEdited, setTaskToBeEdited] = useState({});
   const [viewHeader, setViewHeader] = useState("");
@@ -43,29 +49,7 @@ const Todos = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_BACKEND_URL + "headers")
-      .then(({ data }) => {
-        let listOfHeaders = {};
-        let listOfHeadersAtTop = {};
-
-        data.forEach((header) => {
-          if (header["pinned"]) {
-            listOfHeadersAtTop[header["_id"]] = {
-              title: header["title"],
-              pinned: header["pinned"],
-            };
-          } else {
-            listOfHeaders[header["_id"]] = {
-              title: header["title"],
-              pinned: header["pinned"],
-            };
-          }
-        });
-        addHeadersAtTop(listOfHeadersAtTop);
-        addHeaders(listOfHeaders);
-      })
-      .catch((err) => setError(err));
+    getAndAddHeaders(setHeader, setHeaderAtTop, setError1);
   }, []);
 
   useEffect(() => {
@@ -194,8 +178,8 @@ const Todos = () => {
   */
 
   //Keep task for today at top
-  //Keep pinned headers next
-  //Keep normal headers next
+  //Keep pinned header next
+  //Keep normal header next
 
   const matches = useMediaQuery("(min-width:900px)");
 
@@ -229,42 +213,42 @@ const Todos = () => {
           style={buttonGroup}
           orientation={`${matches ? `horizontal` : `vertical`}`}
         >
-          {Object.keys(headersAtTop).length &&
-            Object.keys(headersAtTop).map((header) => {
+          {Object.keys(headerAtTop).length &&
+            Object.keys(headerAtTop).map((headerId) => {
               return (
-                (!Object.keys(tasks).includes(header) && <></>) || (
+                (!Object.keys(tasks).includes(headerId) && <></>) || (
                   <Button
-                    disabled={viewHeader == header ? true : false}
-                    onClick={() => setViewHeader(header)}
+                    disabled={viewHeader == headerId ? true : false}
+                    onClick={() => setViewHeader(headerId)}
                   >
-                    {headersAtTop[header].title}
+                    {headerAtTop[headerId].title}
                   </Button>
                 )
               );
             })}
-          {Object.keys(headers).length &&
-            Object.keys(headers).map((header) => {
+          {Object.keys(header).length &&
+            Object.keys(header).map((headerId) => {
               return (
-                (!Object.keys(tasks).includes(header) && <></>) || (
+                (!Object.keys(tasks).includes(headerId) && <></>) || (
                   <Button
-                    disabled={viewHeader == header ? true : false}
-                    onClick={() => setViewHeader(header)}
+                    disabled={viewHeader == headerId ? true : false}
+                    onClick={() => setViewHeader(headerId)}
                   >
-                    {headers[header].title}
+                    {header[headerId].title}
                   </Button>
                 )
               );
             })}
         </ButtonGroup>
-        {Object.keys(headersAtTop).length &&
-          Object.keys(headersAtTop).map((headerId) => {
+        {Object.keys(headerAtTop).length &&
+          Object.keys(headerAtTop).map((headerId) => {
             return (
               (headerId !== viewHeader && <></>) || (
                 <>
                   {tasks[headerId] && (
                     <DisplayNonDailyTask
                       tasks={tasks[headerId]}
-                      header={headersAtTop[headerId].title}
+                      header={headerAtTop[headerId].title}
                       deleteTask={deleteTask}
                       markAsDone={markAsDone}
                       markForToBeCompletedToday={markForToBeCompletedToday}
@@ -276,15 +260,15 @@ const Todos = () => {
               )
             );
           })}
-        {Object.keys(headers).length &&
-          Object.keys(headers).map((headerId) => {
+        {Object.keys(header).length &&
+          Object.keys(header).map((headerId) => {
             return (
               (headerId !== viewHeader && <></>) || (
                 <>
                   {tasks[headerId] && (
                     <DisplayNonDailyTask
                       tasks={tasks[headerId]}
-                      header={headers[headerId].title}
+                      header={header[headerId].title}
                       deleteTask={deleteTask}
                       markAsDone={markAsDone}
                       markForToBeCompletedToday={markForToBeCompletedToday}
