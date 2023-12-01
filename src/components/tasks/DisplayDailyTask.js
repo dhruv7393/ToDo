@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { cardBoundaryColor } from "../../style";
 import { useRecoilState } from "recoil";
-import { errorState } from "../error";
+import { errorState } from "../state/atoms/error";
 import { avatarColor } from "../../style";
 import Avatar from "@mui/material/Avatar";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";

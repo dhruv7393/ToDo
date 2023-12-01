@@ -20,7 +20,7 @@ import EditTodo from "./editTask";
 import DisplayDailyTask from "./DisplayDailyTask";
 import { buttonGroup } from "../../style";
 import { useRecoilState } from "recoil";
-import { errorState } from "../error";
+import { errorState } from "../state/atoms/error";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Todos = () => {
