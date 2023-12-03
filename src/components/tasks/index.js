@@ -28,6 +28,7 @@ import {
   updateNonDailyTask,
   markNonDailyForToBeCompletedToday,
 } from "../state/selectors/tasks";
+import DisplayCalls from "./DisplayCalls";
 
 const Todos = () => {
   const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
@@ -133,6 +134,12 @@ const Todos = () => {
           style={buttonGroup}
           orientation={`${matches ? `horizontal` : `vertical`}`}
         >
+          <Button
+            disabled={viewHeader == "Call" ? true : false}
+            onClick={() => setViewHeader("Call")}
+          >
+            Call
+          </Button>
           {Object.keys(headerAtTop).length &&
             Object.keys(headerAtTop).map((headerId) => {
               return (
@@ -200,6 +207,7 @@ const Todos = () => {
               )
             );
           })}
+        {(viewHeader == "Call" && <DisplayCalls />) || <></>}
       </div>
     </>
   );

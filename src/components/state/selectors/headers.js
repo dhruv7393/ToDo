@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getAndAddHeaders = (setHeader, setHeaderAtTop, setError) => {
   axios
-    .get("https://7pquppixfe.us-east-2.awsapprunner.com/api/headers")
+    .get(process.env.REACT_APP_BACKEND_URL + "headers")
     .then(({ data }) => {
       let headersPinned = {};
       let headersNotPinned = {};

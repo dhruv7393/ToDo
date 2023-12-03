@@ -16,11 +16,14 @@ import {
   getAndAddNonDailyTasks,
 } from "./components/state/selectors/tasks";
 import { getAndAddHeaders } from "./components/state/selectors/headers";
+import { getAllCallLog } from "./components/state/selectors/calls";
+import { useCall } from "./components/state/atoms/calls";
 
 function App() {
   const { setHeader, setHeaderAtTop } = useHeaderState();
   const { error, setError } = useError();
   const { updateTaskList, addTasks, addTasksForToday } = useTaskState();
+  const { setCall } = useCall();
 
   useEffect(() => {
     axios
@@ -31,6 +34,7 @@ function App() {
     getAndAddHeaders(setHeader, setHeaderAtTop, setError);
     getAndAddDailyTasks(updateTaskList, setError);
     getAndAddNonDailyTasks(addTasks, addTasksForToday, setError);
+    getAllCallLog(setCall, setError);
   }, []);
 
   useEffect(() => {
