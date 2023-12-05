@@ -59,6 +59,14 @@ export const getAndAddNonDailyTasks = (
         }
       });
 
+      Object.keys(organizedData).forEach((headerId) => {
+        organizedData[headerId] = [
+          ...organizedData[headerId].sort(
+            (a, b) => (a.done | 0) - (b.done | 0)
+          ),
+        ];
+      });
+
       addTasks(organizedData);
       addTasksForToday(listOfTodaysTask);
     })
@@ -100,7 +108,7 @@ export const markNonDailyTaskAsDone = (
 ) => {
   let listOfTasks = tasks[headerId];
   listOfTasks = listOfTasks.map((task) => {
-    if (task._id == id) {
+    if (task._id === id) {
       return { ...task, done: !task.done };
     }
     return task;
@@ -108,7 +116,7 @@ export const markNonDailyTaskAsDone = (
   let newValue = {};
   newValue[headerId] = listOfTasks;
 
-  let taskToBeSent = listOfTasks.filter((task) => task._id == id);
+  let taskToBeSent = listOfTasks.filter((task) => task._id === id);
   axios
     .patch(process.env.REACT_APP_BACKEND_URL + "todos/" + id, taskToBeSent[0])
     .then((data) => {
@@ -128,7 +136,7 @@ export const updateNonDailyTask = (
   const { headerId, _id } = updatedtask;
   let listOfTasks = JSON.parse(JSON.stringify(tasks));
   listOfTasks[headerId] = listOfTasks[headerId].map((task) => {
-    return task._id == _id ? { ...updatedtask } : { ...task };
+    return task._id === _id ? { ...updatedtask } : { ...task };
   });
   addTasks(listOfTasks);
 
@@ -158,14 +166,14 @@ export const markNonDailyForToBeCompletedToday = (
   const today = new Date().toLocaleDateString();
   let listOfTasks = JSON.parse(JSON.stringify(tasks[headerId]));
   listOfTasks = listOfTasks.map((task) => {
-    if (task._id == id) {
+    if (task._id === id) {
       task.completeBy = task.completeBy ? "" : today;
     }
     return task;
   });
   let newValue = {};
   newValue[headerId] = listOfTasks;
-  let taskToBeSent = listOfTasks.filter((task) => task._id == id);
+  let taskToBeSent = listOfTasks.filter((task) => task._id === id);
 
   axios
     .patch(process.env.REACT_APP_BACKEND_URL + "todos/" + id, taskToBeSent[0])
@@ -176,7 +184,7 @@ export const markNonDailyForToBeCompletedToday = (
       Object.keys(listOfTasks).includes(id)
         ? delete listOfTasks[id]
         : (listOfTasks[id] = tasks[headerId].filter(
-            (task) => task._id == id
+            (task) => task._id === id
           )[0]);
       addTasksForToday(listOfTasks);
     })

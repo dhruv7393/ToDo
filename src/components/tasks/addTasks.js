@@ -31,7 +31,7 @@ const AddTodo = ({ onClose, open }) => {
     done: false,
   };
 
-  const { header } = useHeaderState();
+  const { header, headerAtTop } = useHeaderState();
   const { setError } = useError();
 
   const [todo, addTodo] = useState(initialTodo);
@@ -67,6 +67,15 @@ const AddTodo = ({ onClose, open }) => {
             onChange={(e) => addTodo({ ...todo, headerId: e.target.value })}
             label="Age"
           >
+            {Object.keys(headerAtTop).length &&
+              Object.keys(headerAtTop).map((headerId) => (
+                <MenuItem
+                  value={headerAtTop[headerId]._id}
+                  key={headerAtTop[headerId]._id}
+                >
+                  {headerAtTop[headerId].title}
+                </MenuItem>
+              ))}
             {Object.keys(header).length &&
               Object.keys(header).map((headerId) => (
                 <MenuItem

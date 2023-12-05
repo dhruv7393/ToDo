@@ -1,19 +1,8 @@
 import React, { useState } from "react";
-import Rating from "@mui/material/Rating";
-import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
 
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SaveIcon from "@mui/icons-material/Save";
-import DeleteIcon from "@mui/icons-material/Delete";
 import DisplayNonDailyTask from "./DisplayNonDailyTask";
 import EditTodo from "./editTask";
 import DisplayDailyTask from "./DisplayDailyTask";
@@ -31,17 +20,13 @@ import {
 import DisplayCalls from "./DisplayCalls";
 
 const Todos = () => {
-  const { header, setHeader, headerAtTop, setHeaderAtTop } = useHeaderState();
+  const { header, headerAtTop } = useHeaderState();
   const { setError } = useError();
   const { tasks, addTasks, tasksForToday, addTasksForToday } = useTaskState();
 
   const [open, setOpen] = useState(false);
   const [taskToBeEdited, setTaskToBeEdited] = useState({});
   const [viewHeader, setViewHeader] = useState("");
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -77,7 +62,7 @@ const Todos = () => {
   };
 
   const editTask = (headerId, id) => {
-    let listOfTasks = tasks[headerId].filter((task) => task._id == id);
+    let listOfTasks = tasks[headerId].filter((task) => task._id === id);
     setTaskToBeEdited(listOfTasks[0]);
     setOpen(true);
   };
@@ -127,7 +112,6 @@ const Todos = () => {
           todaysTask={Object.keys(tasksForToday)}
           editTask={editTask}
         />
-
         <ButtonGroup
           variant="text"
           aria-label="outlined button group"
@@ -135,7 +119,7 @@ const Todos = () => {
           orientation={`${matches ? `horizontal` : `vertical`}`}
         >
           <Button
-            disabled={viewHeader == "Call" ? true : false}
+            disabled={viewHeader === "Call" ? true : false}
             onClick={() => setViewHeader("Call")}
           >
             Call
@@ -145,8 +129,9 @@ const Todos = () => {
               return (
                 (!Object.keys(tasks).includes(headerId) && <></>) || (
                   <Button
-                    disabled={viewHeader == headerId ? true : false}
+                    disabled={viewHeader === headerId ? true : false}
                     onClick={() => setViewHeader(headerId)}
+                    key={headerId}
                   >
                     {headerAtTop[headerId].title}
                   </Button>
@@ -158,8 +143,9 @@ const Todos = () => {
               return (
                 (!Object.keys(tasks).includes(headerId) && <></>) || (
                   <Button
-                    disabled={viewHeader == headerId ? true : false}
+                    disabled={viewHeader === headerId ? true : false}
                     onClick={() => setViewHeader(headerId)}
+                    key={headerId}
                   >
                     {header[headerId].title}
                   </Button>
@@ -207,7 +193,7 @@ const Todos = () => {
               )
             );
           })}
-        {(viewHeader == "Call" && <DisplayCalls />) || <></>}
+        {(viewHeader === "Call" && <DisplayCalls />) || <></>}
       </div>
     </>
   );

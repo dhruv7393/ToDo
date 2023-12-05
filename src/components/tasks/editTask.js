@@ -20,7 +20,7 @@ const EditTodo = ({ onClose, open, task, updateTask }) => {
     onClose();
   };
 
-  const { header } = useHeaderState();
+  const { header, headerAtTop } = useHeaderState();
 
   const [todo, addTodo] = useState({ ...task });
   const { setError } = useError();
@@ -45,7 +45,7 @@ const EditTodo = ({ onClose, open, task, updateTask }) => {
         sx={{ m: 0, p: 2 }}
         id="customized-dialog-title"
       >
-        <DialogTitle>Add Todo</DialogTitle>
+        <DialogTitle>Edit Todo</DialogTitle>
 
         <DialogContent>
           <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
@@ -59,6 +59,15 @@ const EditTodo = ({ onClose, open, task, updateTask }) => {
               onChange={(e) => addTodo({ ...todo, headerId: e.target.value })}
               label="Age"
             >
+              {Object.keys(headerAtTop).length &&
+                Object.keys(headerAtTop).map((headerId) => (
+                  <MenuItem
+                    value={headerAtTop[headerId]._id}
+                    key={headerAtTop[headerId]._id}
+                  >
+                    {headerAtTop[headerId].title}
+                  </MenuItem>
+                ))}
               {Object.keys(header).length &&
                 Object.keys(header).map((headerId) => (
                   <MenuItem

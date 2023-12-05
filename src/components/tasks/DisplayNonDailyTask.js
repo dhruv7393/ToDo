@@ -48,7 +48,6 @@ export default function DisplayNonDailyTask({
               notes,
               imp,
               addedOn,
-              completedOn,
               completeBy,
               done,
             } = tasks[task];

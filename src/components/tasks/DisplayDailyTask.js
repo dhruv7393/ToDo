@@ -41,7 +41,7 @@ export default function DisplayDailyTask(props) {
             if (parseInt(pending)) {
               return (
                 <Card
-                  key={_id}
+                  key={"Daily" + _id}
                   sx={{
                     width: {
                       xs: "100%",
