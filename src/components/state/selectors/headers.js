@@ -51,3 +51,26 @@ export const addNewHeader = (
       .catch((err) => setError(err));
   }
 };
+
+export const editHeader = (newHeader, setHeader, setHeaderAtTop, setError) => {
+  axios
+    .patch(
+      process.env.REACT_APP_BACKEND_URL + "headers/" + newHeader._id,
+      newHeader
+    )
+    .then((data) => {
+      setError("Header updated successfully");
+      getAndAddHeaders(setHeader, setHeaderAtTop, setError);
+    })
+    .catch((err) => setError(err));
+};
+
+export const deleteHeader = (id, setHeader, setHeaderAtTop, setError) => {
+  axios
+    .delete(process.env.REACT_APP_BACKEND_URL + "headers/" + id)
+    .then((data) => {
+      setError("Header updated successfully");
+      getAndAddHeaders(setHeader, setHeaderAtTop, setError);
+    })
+    .catch((err) => setError(err));
+};

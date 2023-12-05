@@ -104,7 +104,9 @@ const Todos = () => {
           <></>
         )}
         <DisplayNonDailyTask
-          tasks={tasksForToday}
+          tasks={Object.values(tasksForToday).sort(
+            (a, b) => (a.done | 0) - (b.done | 0)
+          )}
           header="Tasks For Today"
           deleteTask={deleteTask}
           markAsDone={markAsDone}
