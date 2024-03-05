@@ -18,6 +18,8 @@ import {
 import { getAndAddHeaders } from "./components/state/selectors/headers";
 import { getAllCallLog } from "./components/state/selectors/calls";
 import { useCall } from "./components/state/atoms/calls";
+import DisplayDailyTask from "./components/tasks/DisplayDailyTask";
+import DisplayTasks from "./components/tasks/DisplayTasks";
 
 function App() {
   const { setHeader, setHeaderAtTop } = useHeaderState();
@@ -54,10 +56,8 @@ function App() {
       <ThemeProvider theme={darkTheme}>
         <div className="container">
           <div className="halfScreen">
-            {(error && <Alert severity="error">{error}</Alert>) || <></>}
-            <Todos />
-            <Header />
-            <AddTaskButton />
+            <DisplayDailyTask />
+            <DisplayTasks />
           </div>
           <div className="halfScreen inspiration">
             <Inpiration />

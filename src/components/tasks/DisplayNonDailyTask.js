@@ -121,7 +121,7 @@ export default function DisplayNonDailyTask({
                 </CardActions>
               </Card>
             );
-          })}
+          }) || <></>}
       </Stack>
     </Box>
   );
