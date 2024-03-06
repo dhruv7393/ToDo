@@ -11,9 +11,14 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import axios from "axios";
+import { styled } from '@mui/material/styles';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import Button from "@mui/material/Button";
 
 export default function DisplayDailyTask(props) {
   const [taskList, updateTaskList] = React.useState([]);
+
+  
 
   const loadTasks = () =>{
     axios
@@ -91,7 +96,7 @@ export default function DisplayDailyTask(props) {
                         {surplus}
                       </Avatar> || <></>}</>
                     }
-                    title={title}
+                    title={title==="Goon"? <LightTooltip title={textToBeDisplayed(pending, surplus)}> <Button>{title}</Button></LightTooltip> : title}
                   />
                 </Card>
               );
@@ -100,3 +105,36 @@ export default function DisplayDailyTask(props) {
     </Box>
   );
 }
+
+const textToBeDisplayed = (pending, surplus) =>{
+  const goono = ["Sahaj uncle","Kishanji","Chirag bhai","Aashish bhai","Jigar bhai","Tejal bhabhi","Vinay bhai","Riddhi ben","Jamshedji tata - dilip kumar","Jayant uncle","Lalit uncle","Yash bhai","Miral bhai","Vivek bhai","Hetal ben","Prashant bhai","Rupal bhabhi","Viru bhai","Malav bhai","Hardik bhai","Dharti ben","Yogin bhai","Manmeet bhai","Mayank bhai","Ankur bhai","Rahul bhai","Meet bhai","Satish bhai","Harsh bhai","Kesin bhai","Aashish bhai","Shail bhai","Raghav bhai","Rishabh bhai","Rujool bhai","Deep bhai","Ujval bhai","Advait bhai","Ruchit bhai kadakiya","Amit bhai","Jaymin bhai","Vrund bhai","Jaydeep bhai","Jaymin bhai pickup","Jay bhai la","Mayur bhai","Nipun bhai","Grinish bhai","Sujeet bhai","Rahul bhai sf/canada","Gokul bhai","Jignesh bhai","Manan bhai","Spandan bhai","Daddy","Alpesh bhai","Shasvat bhai","Anmol bhai","Sneha bhabhi","Dhruvalbhai","Nisarg bhai","Aashish bhai Pandya","Sarvam bhai dr","Punyesh bhai","Yash bhai Boston","Deep bhai reno","Bhargav bhai reno","Darshan bhai reno","Vivek bhai fresno","Ronak bhai","Dr.saheb","Jimit bhai","Divyang bhai","Priyank bhai","Jal bhai","Anil bhai","Milan bhai nj","Jay bhai paji","Dhrumil bhai vora","Kirit bhai","Divyesh bhai","Sashank bhai","Purvadarshan bhai","Ambrish bhai","Sukumar bhai","Sarvam swami bus 500 bus","Jugal bhai","Gaurav bhai","Manthan bhai","Krutarth bhai","Kunj bhai","Milind bhai","Harbir Bhai Protek","Sambhav bhai Protek","Dhruvbhai Patel texas","Maa","Papa","Satish papa","Mona mummy","Priyank jiju","Disha didi","Mauli","Payal didi","Ram","Shubham","Bhavana","Dominique","Arpit","Vivek","Mini"]
+
+  let valueToBeCalculated = ((Math.ceil(
+    (new Date(new Date().toLocaleDateString()) - new Date('3/4/2024')) /
+      (1000 * 60 * 60 * 24)
+  )) -(pending -1) + surplus)%22
+  console.log(valueToBeCalculated)
+  let value = (valueToBeCalculated%(goono.length/5)) < 1? 1 : (valueToBeCalculated%(goono.length/5))
+  let notes = (goono.slice((value-1)*5, (value*5)))
+  return (
+      <>
+          {
+              notes.length && notes.map(note => {
+                  return (<>{note} <br/></>)
+              })|| <></>
+          }
+      </>
+  )
+  }
+
+
+  const LightTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: 11,
+    },
+  }));
