@@ -75,17 +75,17 @@ const  DisplayTasks= () => {
         task.notes = task.notes[0].split('\n')
         axios.patch(process.env.REACT_APP_BACKEND_URL + "tasks/"+task._id, task)
         .then(data=> console.log(data))
+        .then(()=>loadData())
         .catch(err => console.log(err))
         handleTaskToBeEdited({})
         handleOpenEdit(false)
-        loadData()
     }
 
     const addTask= (task) =>{
         handleOpenAdd(false)
         task.notes = task.notes[0].split('\n')
         axios.post(process.env.REACT_APP_BACKEND_URL + "tasks", task)
-        .then(data=> loadData())
+        .then(()=> loadData())
         .catch(err => loadData())
     }
     

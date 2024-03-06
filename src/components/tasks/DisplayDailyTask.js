@@ -1,9 +1,7 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { cardBoundaryColor } from "../../style";
@@ -12,26 +10,37 @@ import Avatar from "@mui/material/Avatar";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTaskState } from "../state/atoms/tasks";
-import { useError } from "../state/atoms/error";
-import { updateDailyTaskCount } from "../state/selectors/tasks";
-
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  marginLeft: "auto",
-}));
+import axios from "axios";
 
 export default function DisplayDailyTask(props) {
-  const { taskList, updateTaskList } = useTaskState();
-  const { error, setError } = useError();
+  const [taskList, updateTaskList] = React.useState([]);
+
+  const loadTasks = () =>{
+    axios
+    .get(process.env.REACT_APP_BACKEND_URL + "dailytask")
+    .then(({data}) => {
+      updateTaskList([...data]);
+    })
+    .catch((err) => console.log(err));
+  }
+
+  React.useEffect(()=>{
+    axios
+      .get(process.env.REACT_APP_BACKEND_URL + "dailytask/updatecount")
+      .then((data) => console.log("Daily task updated"))
+      .then(()=> loadTasks())
+      .catch((err) => console.log(err));
+  },[])
 
   const markAsChecked = (taskToBeUpdated) => {
-    updateDailyTaskCount(taskList, taskToBeUpdated, updateTaskList, setError);
+    axios
+    .patch(
+      process.env.REACT_APP_BACKEND_URL + "dailytask/" + taskToBeUpdated["_id"],
+      taskToBeUpdated
+    )
+    .then((data) => loadTasks())
+    .catch((err) => console.log(err));
   };
-
-  const matches = useMediaQuery("(max-width:600px)");
 
   return (
     <Box key={"Daily Tasks"} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
@@ -59,7 +68,7 @@ export default function DisplayDailyTask(props) {
                             markAsChecked({
                               _id,
                               title,
-                              done: pending == "1" ? !done : done,
+                              done: pending == 1 ? true : false,
                               edited,
                               pending: pending > 0 ? pending -1 :0,
                               surplus: pending > 0 ? surplus : surplus+1,

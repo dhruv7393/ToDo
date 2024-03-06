@@ -1,19 +1,11 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import axios from "axios";
 import Rating from "@mui/material/Rating";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { useHeaderState } from "../state/atoms/headers";
-import { useError } from "../state/atoms/error";
 
 const AddTodoNew = ({ onClose, open, addTask }) => {
   const handleClose = () => {
@@ -22,7 +14,7 @@ const AddTodoNew = ({ onClose, open, addTask }) => {
 
   const [todo, addTodo] = useState({ 
     title:"",
-    notes:[],
+    notes:[""],
     imp:1,
     done:false,
     pinned:false

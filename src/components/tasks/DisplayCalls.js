@@ -5,12 +5,10 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { cardBoundaryColor } from "../../style";
-import { useError } from "../state/atoms/error";
 import axios from "axios";
 
 export default function DisplayCalls(props) {
   const [call, setCall ] = React.useState([]);
-  const { setError } = useError();
 
   const loadCalls = () =>{
     axios
