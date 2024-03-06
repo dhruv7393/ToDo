@@ -1,5 +1,5 @@
 import Todos from "./components/tasks";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/headers";
 import AddTaskButton from "./components/tasks/addTaskButton";
 import Inpiration from "./components/inspiration";
@@ -20,12 +20,16 @@ import { getAllCallLog } from "./components/state/selectors/calls";
 import { useCall } from "./components/state/atoms/calls";
 import DisplayDailyTask from "./components/tasks/DisplayDailyTask";
 import DisplayTasks from "./components/tasks/DisplayTasks";
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import IconButton from "@mui/material/IconButton";
+import DisplayCalls from "./components/tasks/DisplayCalls";
 
 function App() {
   const { setHeader, setHeaderAtTop } = useHeaderState();
   const { error, setError } = useError();
   const { updateTaskList, addTasks, addTasksForToday } = useTaskState();
   const { setCall } = useCall();
+  const [showCallers, setShowCallers] = useState(false)
 
   useEffect(() => {
     axios
@@ -58,6 +62,21 @@ function App() {
           <div className="halfScreen">
             <DisplayDailyTask />
             <DisplayTasks />
+            
+            <div style={{margin:"auto", textAlign:"center"}}>
+                <IconButton
+                    aria-label="settings"
+                    onClick={() =>
+                      setShowCallers(!showCallers)
+                    }
+                >
+                    <VideoCallIcon
+                        color={""}
+                        fontSize='large'
+                    />
+                </IconButton>
+                {showCallers && <DisplayCalls /> || <></>}
+            </div>
           </div>
           <div className="halfScreen inspiration">
             <Inpiration />

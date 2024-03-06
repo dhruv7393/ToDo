@@ -192,7 +192,7 @@ const textToBeDisplayed = (notes) =>{
     )
     }
 
-const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+const LightTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {

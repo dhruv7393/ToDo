@@ -1,25 +1,40 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import IconButton from "@mui/material/IconButton";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { cardBoundaryColor } from "../../style";
-import { avatarColor } from "../../style";
-import Avatar from "@mui/material/Avatar";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTaskState } from "../state/atoms/tasks";
 import { useError } from "../state/atoms/error";
-import { updateDailyTaskCount } from "../state/selectors/tasks";
-import { useCall } from "../state/atoms/calls";
-import { updateCallLog } from "../state/selectors/calls";
+import axios from "axios";
 
 export default function DisplayCalls(props) {
-  const { call, setCall } = useCall();
+  const [call, setCall ] = React.useState([]);
   const { setError } = useError();
+
+  const loadCalls = () =>{
+    axios
+    .get(process.env.REACT_APP_BACKEND_URL + "call")
+    .then(({ data }) => {
+      data.sort((a, b) => (a.done | 0) - (b.done | 0));
+      setCall(data);
+    })
+    .catch((err) => console.log(err));
+  }
+
+  React.useEffect(()=>{
+    loadCalls()
+  }, [])
+
+  const updateCallLog = (newCallValue) => {
+    axios
+      .patch(
+        process.env.REACT_APP_BACKEND_URL + "call/" + newCallValue._id,
+        newCallValue
+      )
+      .then((data) => loadCalls())
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Box key={"Calls"} sx={{ width: "100%", marginRight: 0.5, my: 5 }}>
@@ -34,7 +49,7 @@ export default function DisplayCalls(props) {
                   width: {
                     xs: "100%",
                     sm: "40%",
-                    md: "20%",
+                    md: "30%",
                   },
                 }}
                 style={cardBoundaryColor(5)}
@@ -45,15 +60,12 @@ export default function DisplayCalls(props) {
                       color={"" + (done && "primary")}
                       onClick={() => {
                         updateCallLog(
-                          { _id, title, done: !done },
-                          call,
-                          setCall,
-                          setError
+                          {_id, title, done: !done }
                         );
                       }}
                     />
                   }
-                  title={title}
+                  title={<div>{title}</div>}
                 />
               </Card>
             );
