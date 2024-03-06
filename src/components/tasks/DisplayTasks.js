@@ -26,33 +26,22 @@ const  DisplayTasks= () => {
 
     const [taskToBeEdited, handleTaskToBeEdited] =useState({})
 
+    const sortDetails = (dataToBeSorted) =>{
+        let newData = dataToBeSorted.sort((a,b)=> b.imp-a.imp)
+        return newData
+    }
+
     const loadData = () =>{
         axios.get(process.env.REACT_APP_BACKEND_URL + "tasks")
         .then(({data}) => {
-            let newData = data.sort((a,b)=> {
-                if((a.done && b.done) || (!a.done && !b.done)){
-                    return b.imp-a.imp
-                }else if(a.done){
-                    return 1
-                }else if(b.done){
-                    return -1
-                }else{
-                    return b.imp-a.imp
-                }
-                })
-
-                newData = newData.sort((a,b)=> {
-                    if((a.pinned && b.pinned) || (!a.pinned && !b.pinned)){
-                        return b.imp-a.imp
-                    }else if(a.pinned){
-                        return -1
-                    }else if(b.pinned){
-                        return 1
-                    }else{
-                        return b.imp-a.imp
-                    }
-                    })
-            updateTasks([...newData])
+            let dataToBeAdded = []
+            let dataToBeSorted = data.filter(taskForSort => taskForSort.pinned && !taskForSort.done)
+            dataToBeAdded = [...dataToBeAdded, ...sortDetails(dataToBeSorted)]
+            dataToBeSorted = data.filter(taskForSort => !taskForSort.pinned && !taskForSort.done)
+            dataToBeAdded = [...dataToBeAdded, ...sortDetails(dataToBeSorted)]
+            dataToBeSorted = data.filter(taskForSort => taskForSort.done)
+            dataToBeAdded = [...dataToBeAdded, ...sortDetails(dataToBeSorted)]
+            updateTasks([...dataToBeAdded])
         })
     }
     useEffect(()=>{

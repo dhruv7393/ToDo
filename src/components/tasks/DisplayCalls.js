@@ -63,7 +63,7 @@ export default function DisplayCalls(props) {
                       }}
                     />
                   }
-                  title={<div>{title}</div>}
+                  title={done ? <div style={{textAlign:"left"}}><s>{title}</s></div> : <div style={{textAlign:"left"}}>{title}</div>}
                 />
               </Card>
             );
