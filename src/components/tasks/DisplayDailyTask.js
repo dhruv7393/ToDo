@@ -18,12 +18,18 @@ import Button from "@mui/material/Button";
 export default function DisplayDailyTask(props) {
   const [taskList, updateTaskList] = React.useState([]);
 
+  const [target, SetTarget] = React.useState(0)
+
   
 
   const loadTasks = () =>{
     axios
     .get(process.env.REACT_APP_BACKEND_URL + "dailytask")
     .then(({data}) => {
+      let dataIndex = data.findIndex(task => task.title==="Vision")
+      data.unshift(data[dataIndex])
+      data.splice(dataIndex+1, 1)
+      SetTarget(data[0]["pending"])
       updateTaskList([...data]);
     })
     .catch((err) => console.log(err));
@@ -53,6 +59,7 @@ export default function DisplayDailyTask(props) {
         {(taskList.length &&
           taskList.map((task) => {
             let { _id, title, done, edited, pending } = task;
+            if(title==="Vision" || pending<target){
               return (
                 <Card
                   key={"Daily" + _id}
@@ -67,7 +74,7 @@ export default function DisplayDailyTask(props) {
                 >
                   <CardHeader
                     action={
-                      <IconButton
+                      pending < target && <IconButton
                           aria-label="settings"
                           onClick={() =>
                             markAsChecked({
@@ -82,7 +89,7 @@ export default function DisplayDailyTask(props) {
                           <AddCircleOutlineIcon
                             color={""}
                           />
-                        </IconButton>
+                        </IconButton> || <></>
                     }
                     avatar={
                       <Avatar sx={pending <0 ?avatarColor(5):avatarColor(1)} aria-label="recipe">
@@ -93,6 +100,10 @@ export default function DisplayDailyTask(props) {
                   />
                 </Card>
               );
+            }else{
+              return <></>
+            }
+              
           })) || <></>}
       </Stack>
     </Box>
