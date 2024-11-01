@@ -11,8 +11,16 @@ export default function DisplayCalls(props) {
   const [call, setCall ] = React.useState([]);
 
   const loadCalls = () =>{
+    let config={
+      method: "get",
+      url: process.env.REACT_APP_BACKEND_URL + "call",
+      headers:{
+        "Content-Type":"application/json",
+        'Access-Control-Allow-Origin' : '*'
+      }
+    }
     axios
-    .get(process.env.REACT_APP_BACKEND_URL + "call")
+    .request(config)
     .then(({ data }) => {
       data.sort((a, b) => (a.done | 0) - (b.done | 0));
       setCall(data);

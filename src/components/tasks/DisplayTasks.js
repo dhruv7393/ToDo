@@ -32,7 +32,15 @@ const  DisplayTasks= () => {
     }
 
     const loadData = () =>{
-        axios.get(process.env.REACT_APP_BACKEND_URL + "tasks")
+        let config={
+            method: "get",
+            url: process.env.REACT_APP_BACKEND_URL + "tasks",
+            headers:{
+              "Content-Type":"application/json",
+              'Access-Control-Allow-Origin' : '*'
+            }
+          }
+        axios.request(config)
         .then(({data}) => {
             let dataToBeAdded = []
             let dataToBeSorted = data.filter(taskForSort => taskForSort.pinned && !taskForSort.done)
@@ -55,7 +63,15 @@ const  DisplayTasks= () => {
     }
 
     const deleteTask = (id) => {
-        axios.delete(process.env.REACT_APP_BACKEND_URL + "tasks/"+id)
+        let config={
+          method: "delete",
+          url: process.env.REACT_APP_BACKEND_URL + "tasks/"+id,
+          headers:{
+            "Content-Type":"application/json",
+            'Access-Control-Allow-Origin' : '*'
+          }
+        }
+        axios.request(config)
         .then(data => loadData())
         .catch(err => console.log(err))
     }

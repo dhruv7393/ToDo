@@ -19,8 +19,16 @@ export default function DisplayDailyTask(props) {
   const [taskList, updateTaskList] = React.useState([]);
 
   const loadTasks = () =>{
+    let config={
+      method: "get",
+      url: process.env.REACT_APP_BACKEND_URL + "dailytask",
+      headers:{
+        "Content-Type":"application/json",
+        'Access-Control-Allow-Origin' : '*'
+      }
+    }
     axios
-    .get(process.env.REACT_APP_BACKEND_URL + "dailytask")
+    .request(config)
     .then(({data}) => {
       let dataIndex = data.findIndex(task => task.title==="Vision")
       data.unshift(data[dataIndex])
@@ -31,8 +39,16 @@ export default function DisplayDailyTask(props) {
   }
 
   React.useEffect(()=>{
+    let config={
+      method: "get",
+      url: process.env.REACT_APP_BACKEND_URL + "dailytask/updatecount",
+      headers:{
+        "Content-Type":"application/json",
+        'Access-Control-Allow-Origin' : '*'
+      }
+    }
     axios
-      .get(process.env.REACT_APP_BACKEND_URL + "dailytask/updatecount")
+    .request(config)
       .then((data) => {})
       .then(()=> loadTasks())
       .catch((err) => console.log(err));
