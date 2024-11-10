@@ -114,6 +114,10 @@ const ShowTasks = () => {
     const addTodo = (newTodo) =>{
         let arrayWithoutDeletedTodo = [...todos]
 
+        if(newTodo["repeatOn"].every(item => typeof item === 'object')){
+          newTodo["repeatOn"] = Object.values(newTodo["repeatOn"]).map(day => day.value)
+        }
+
         if(Object.keys(newTodo).includes("repeatAfter")){
           newTodo["canBeRepeated"] = newTodo["repeatAfter"] > 0 ? true : false
         }
