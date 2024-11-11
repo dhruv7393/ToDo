@@ -270,7 +270,7 @@ const ShowTasks = () => {
         .request(config)
         .then(({data}) => {
           console.log(data)
-          setTodos([...data])
+          setTodos([...sortData([...data])])
         })
         .catch((err) => {
           console.log("Error:", err)
