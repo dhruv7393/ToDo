@@ -114,7 +114,7 @@ const ShowTasks = () => {
     const addTodo = (newTodo) =>{
         let arrayWithoutDeletedTodo = [...todos]
 
-        if(newTodo["repeatOn"].every(item => typeof item === 'object')){
+        if(Object.keys(newTodo).includes("repeatOn") && newTodo["repeatOn"].every(item => typeof item === 'object')){
           newTodo["repeatOn"] = Object.values(newTodo["repeatOn"]).map(day => day.value)
         }
 
