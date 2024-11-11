@@ -54,8 +54,8 @@ const ShowTasks = () => {
     const sortData = (todosForSort) => {
         return todosForSort.sort((a, b) => {
             // Step 1: Sort by "count" (consider absent "count" as 0)
-            const countA = a.count !== undefined ? a.count : 0;
-            const countB = b.count !== undefined ? b.count : 0;
+            const countA = a.count !== undefined ? a.count : -1;
+            const countB = b.count !== undefined ? b.count : -1;
             if (countA !== countB) {
               return countA - countB;
             }
