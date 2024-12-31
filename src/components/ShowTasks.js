@@ -344,7 +344,7 @@ const ShowTasks = () => {
           setOnVaccationDetails({ ...data[0] });
         })
         .catch((err) => {
-          printError(error);
+          printError(err);
           openNotification(
             "Vaccation details",
             `Failed to load vaccation details`,
@@ -363,7 +363,7 @@ const ShowTasks = () => {
           setTodos([...sortData([...data])]);
         })
         .catch((err) => {
-          printError(error);
+          printError(err);
           openNotification(
             "Cannot load ToDos",
             `Please check error logs`,
