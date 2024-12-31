@@ -442,7 +442,7 @@ const ShowTasks = () => {
                 !(
                   !Object.keys(checkedItems).length &&
                   Object.keys(todo).includes("count") &&
-                  todo.count > 1
+                  todo.count > 7
                 ) &&
                 !(
                   !Object.keys(checkedItems).length &&
