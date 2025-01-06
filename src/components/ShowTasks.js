@@ -427,13 +427,16 @@ const ShowTasks = () => {
           value={onVaccationDetails.onVaccation}
           onChange={(checked) => handleVaccationSelected(checked)}
         />{" "}
-        <Badge count={onVaccationDetails.vaccationDays} />
         <Badge
           count={calculateDateDifference(
             onVaccationDetails.startedFrom,
             onVaccationDetails.vaccationDays
           )}
-          style={{ backgroundColor: "#52c41a" }}
+          style={{ backgroundColor: "#52c41a", marginLeft: "3px" }}
+        />
+        <Badge
+          count={onVaccationDetails.vaccationDays}
+          style={{ marginLeft: "3px" }}
         />
         <List
           dataSource={menuItems}
