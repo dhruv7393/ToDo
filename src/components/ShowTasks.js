@@ -66,8 +66,10 @@ const ShowTasks = () => {
   const sortData = (todosForSort) => {
     return todosForSort.sort((a, b) => {
       // Step 1: Sort by "count" (consider absent "count" as 0)
-      const countA = a.count !== undefined ? a.count : -1;
-      const countB = b.count !== undefined ? b.count : -1;
+      const countA =
+        a.count !== undefined ? (a.count < 0 ? a.count : a.count + 1) : 0;
+      const countB =
+        b.count !== undefined ? (b.count < 0 ? b.count : b.count + 1) : 0;
       if (countA !== countB) {
         return countA - countB;
       }
@@ -90,6 +92,10 @@ const ShowTasks = () => {
       // Step 5: Sort by "importance" in descending order
       if (a.importance !== b.importance) {
         return b.importance - a.importance;
+      }
+
+      if (a.count !== b.count) {
+        return countA - countB;
       }
 
       return 0; // Maintain original order if all criteria are the same
@@ -183,7 +189,7 @@ const ShowTasks = () => {
           `It has been deleted`
         );
         arrayWithoutDeletedTodo.splice(index, 1);
-        setTodos(sortData(arrayWithoutDeletedTodo));
+        setTodos([...sortData(arrayWithoutDeletedTodo)]);
       })
       .catch(function (error) {
         printError(error);
@@ -327,6 +333,20 @@ const ShowTasks = () => {
     );
   };
 
+  const calculateDateDifference = (startedFrom, vaccationDays) => {
+    // Convert both dates to timestamps
+    const timestamp1 = new Date(new Date().toLocaleDateString()).getTime();
+    const timestamp2 = new Date(startedFrom).getTime();
+
+    // Calculate the absolute difference in milliseconds
+    const differenceInMilliseconds = Math.abs(timestamp1 - timestamp2);
+
+    // Convert the difference to days
+    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+    return differenceInDays + 1 - vaccationDays;
+  };
+
   useEffect(() => {
     if (useMock) {
       let sortedToDos = [...sortData(todosFromMock)];
@@ -408,6 +428,13 @@ const ShowTasks = () => {
           onChange={(checked) => handleVaccationSelected(checked)}
         />{" "}
         <Badge count={onVaccationDetails.vaccationDays} />
+        <Badge
+          count={calculateDateDifference(
+            onVaccationDetails.startedFrom,
+            onVaccationDetails.vaccationDays
+          )}
+          style={{ backgroundColor: "#52c41a" }}
+        />
         <List
           dataSource={menuItems}
           renderItem={(item) => (
@@ -431,7 +458,6 @@ const ShowTasks = () => {
       <Row gutter={16}>
         {(todos.length &&
           todos.map((todo, index) => {
-            console.log(Object.keys(checkedItems).length);
             let doDisplay =
               (!(
                 !Object.keys(checkedItems).length &&
