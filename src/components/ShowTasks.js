@@ -43,6 +43,7 @@ const ShowTasks = () => {
     { id: 2, label: "Done" },
     { id: 3, label: "Pinned" },
     { id: 4, label: "Repetable" },
+    { id: 5, label: "Later" },
   ];
 
   const printError = (error) => console.log("Error:", error);
@@ -321,6 +322,19 @@ const ShowTasks = () => {
     );
   };
 
+  const handleLater = (index) => {
+    let todoToBeModified = todos[index];
+    todoToBeModified.setForLater = !todoToBeModified.setForLater;
+    todoToBeModified.done = !todoToBeModified.done;
+    updateTodo(
+      index,
+      todoToBeModified,
+      "patch",
+      `It has been marked for later`,
+      `Could not be marked for later`
+    );
+  };
+
   const handlePinned = (index) => {
     let todoToBeModified = todos[index];
     todoToBeModified.pinned = !todoToBeModified.pinned;
@@ -470,6 +484,11 @@ const ShowTasks = () => {
               ) &&
                 !(
                   !Object.keys(checkedItems).length &&
+                  Object.keys(todo).includes("setForLater") &&
+                  todo.setForLater
+                ) &&
+                !(
+                  !Object.keys(checkedItems).length &&
                   Object.keys(todo).includes("count") &&
                   todo.count > 7
                 ) &&
@@ -495,6 +514,7 @@ const ShowTasks = () => {
                   updatedRepeat={updatedRepeat}
                   updatedTaskDetail={updatedTaskDetail}
                   handleDelete={handleDelete}
+                  handleLater={handleLater}
                 />
               );
             }
