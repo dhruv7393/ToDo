@@ -112,7 +112,7 @@ const DisplayIndividualTask = ({
               <Button
                 key="done"
                 onClick={() => handleDone(index)}
-                disabled={isCountable}
+                disabled={setForLater || isCountable}
                 type={done || isCountable ? "primary" : "text"}
                 shape="circle"
               >

@@ -325,7 +325,7 @@ const ShowTasks = () => {
   const handleLater = (index) => {
     let todoToBeModified = todos[index];
     todoToBeModified.setForLater = !todoToBeModified.setForLater;
-    todoToBeModified.done = !todoToBeModified.done;
+    todoToBeModified.done = false;
     updateTodo(
       index,
       todoToBeModified,
